@@ -46,7 +46,7 @@ class Evaluator:
         cum_rr = 0
         for usr_id in self.eval_target.keys():
             if self.eval_target[usr_id] in topk[usr_id, :]:
-                cur_rank = 1 / np.where(topk[usr_id, :] == self.eval_target[usr_id])[0][0] + 1
+                cur_rank = 1 / (np.where(topk[usr_id, :] == self.eval_target[usr_id])[0][0] + 1)
                 cum_rr += cur_rank
         return cum_rr / len(self.eval_target.keys())
 
