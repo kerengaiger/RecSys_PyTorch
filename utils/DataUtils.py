@@ -4,6 +4,11 @@ import numpy as np
 import pandas as pd
 import scipy.sparse as sp
 
+
+def filter_by_cnt(df, col, min_cnt, max_cnt):
+    return df.groupby(col).filter(lambda x: (len(x) > min_cnt) and len(x) < max_cnt)
+
+
 def load_data(data_path):
     with open(data_path, 'rb') as f:
         data = pickle.load(f)
@@ -13,7 +18,10 @@ def load_data(data_path):
 
     return train_matrix, test_matrix, user_id_map, user_popularity, item_id_map, item_popularity, num_uesrs, num_items
 
-def preprocess(data_path, save_path, stat_path, sep, train_ratio=0.8, binarize_threshold=0.0, order_by_popularity=True):
+
+def preprocess(data_path, save_path, stat_path, sep, min_usr_len, max_usr_len,
+               min_item_cnt, max_item_cnt, fin_min_usr_len, train_ratio=0.8, binarize_threshold=0.0,
+               order_by_popularity=True, leave_one_out=True):
     """
     [1]
     Read raw data.
@@ -40,6 +48,11 @@ def preprocess(data_path, save_path, stat_path, sep, train_ratio=0.8, binarize_t
     
     # convert ratings into implicit feedback
     data['ratings'] = 1.0
+
+    # pre process - remove rare and popular users and items
+    data = filter_by_cnt(data, 'user', min_usr_len, max_usr_len)
+    data = filter_by_cnt(data, 'item', min_item_cnt, max_item_cnt)
+    data = filter_by_cnt(data, 'user', fin_min_usr_len, max_usr_len)
 
     num_items_by_user = data.groupby('user', as_index=False).size()
     num_items_by_user = num_items_by_user.set_index('user')
