@@ -7,7 +7,7 @@ import scipy.sparse as sp
 
 class Dataset:
     def __init__(self, data_dir, data_name, train_ratio, device, min_usr_len, max_usr_len, min_item_cnt, max_item_cnt,
-                 fin_min_usr_len, pos_thresh):
+                 fin_min_usr_len, pos_thresh, use_validation=False):
         self.train_ratio = train_ratio
         self.num_negatives = 3
         self.device = device
@@ -30,7 +30,8 @@ class Dataset:
             print('Already preprocessed. Load from file.')
         else:
             preprocess(os.path.join(data_dir, data_name, filename), data_path, stat_path, sep, min_usr_len, max_usr_len,
-                       min_item_cnt, max_item_cnt, fin_min_usr_len, max_usr_len, binarize_threshold=pos_thresh)
+                       min_item_cnt, max_item_cnt, fin_min_usr_len, use_validation,
+                       binarize_threshold=pos_thresh)
 
         print('Read movielens data from %s' % data_path)
         self.train_matrix, self.test_matrix, self.user_id_map, self.user_popularity, self.item_id_map, self.item_popularity, self.num_uesrs, self.num_items = load_data(data_path)
