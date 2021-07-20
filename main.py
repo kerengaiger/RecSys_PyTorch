@@ -1,4 +1,5 @@
 import os
+import pickle
 import numpy as np
 import argparse
 import torch
@@ -9,56 +10,91 @@ from utils.Dataset import Dataset
 from utils.Logger import Logger
 from utils.Evaluator import Evaluator
 from utils.Trainer import Trainer
+from ax.service.managed_loop import optimize
+
+
+def train_with_conf(conf):
+    model_conf = Params(os.path.join(conf['conf_dir'], conf['model'].lower() + '.json'))
+    for k in conf.keys():
+        model_conf.update_dict(k, conf[k])
+    print(model_conf)
+
+    np.random.seed(conf['seed'])
+    torch.random.manual_seed(conf['seed'])
+
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+
+    dataset = Dataset(
+        data_dir=conf['data_dir'],
+        data_name=model_conf.data_name,
+        train_ratio=0.8,
+        device=device,
+        min_usr_len=model_conf.min_usr_len,
+        max_usr_len=model_conf.max_usr_len,
+        min_item_cnt=model_conf.min_item_cnt,
+        max_item_cnt=model_conf.max_item_cnt,
+        fin_min_usr_len=model_conf.fin_min_usr_len,
+        pos_thresh=model_conf.pos_thresh
+    )
+
+    log_dir = os.path.join('saves', conf['model'])
+    logger = Logger(log_dir)
+    model_conf.save(os.path.join(logger.log_dir, 'config.json'))
+
+    eval_pos, eval_target = dataset.eval_data()
+    item_popularity = dataset.item_popularity
+    evaluator = Evaluator(eval_pos, eval_target, item_popularity, model_conf.top_k)
+
+    model_base = getattr(models, conf['model'])
+    model = model_base(model_conf, dataset.num_users, dataset.num_items, device)
+
+    logger.info(model_conf)
+    logger.info(dataset)
+
+    trainer = Trainer(
+        dataset=dataset,
+        model=model,
+        evaluator=evaluator,
+        logger=logger,
+        conf=model_conf
+    )
+    return trainer.train()
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, default='EASE')
+parser.add_argument('--tune', action='store_true')
 parser.add_argument('--data_dir', type=str, default='./data')
 parser.add_argument('--save_dir', type=str, default='./saves')
 parser.add_argument('--conf_dir', type=str, default='./conf')
 parser.add_argument('--seed', type=int, default=428)
 
 conf = parser.parse_args()
-model_conf = Params(os.path.join(conf.conf_dir, conf.model.lower() + '.json'))
-model_conf.update_dict('exp_conf', conf.__dict__)
 
-np.random.seed(conf.seed)
-torch.random.manual_seed(conf.seed)
+if conf.tune:
+    best_parameters, values, _experiment, _cur_model = optimize(
+                parameters=[
+                    {"name": "learning_rate", "type": "range", "value_type": "float", "bounds": [5e-3, 5e-2]},
+                    {"name": "hidden_dim", "type": "choice", "value_type": "int", "values": [20, 32, 50, 64, 100]},
+                    {"name": "batch_size", "type": "choice", "value_type": "int", "values": [4096, 3200, 1000, 6000]},
+                    {"name": "conf_dir", "type": "fixed", "value_type": "str", "value": conf.conf_dir},
+                    {"name": "model", "type": "fixed", "value_type": "str", "value": conf.model},
+                    {"name": "seed", "type": "fixed", "value_type": "int", "value": conf.seed},
+                    {"name": "data_dir", "type": "fixed", "value_type": "str", "value": conf.data_dir},
+                    {"name": "save_dir", "type": "fixed", "value_type": "str", "value": conf.save_dir},
 
-device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+                ],
+                evaluation_function=train_with_conf,
+                minimize=True,
+                objective_name='valid_loss',
+                total_trials=5
+            )
+    best_parameters['best_epoch'] = values[0]['early_stop_epoch']
+    pickle.dump(best_parameters, open(args.cnfg_out, "wb"))
+    # change the max epochs
+    # change the way of splitting the dataset - don't seperate to validation
+    train_with_conf(best_parameters)
 
-dataset = Dataset(
-    data_dir=conf.data_dir,
-    data_name=model_conf.data_name,
-    train_ratio=model_conf.train_ratio,
-    device=device,
-    min_usr_len=model_conf.min_usr_len,
-    max_usr_len=model_conf.max_usr_len,
-    min_item_cnt=model_conf.min_item_cnt,
-    max_item_cnt=model_conf.max_item_cnt,
-    fin_min_usr_len=model_conf.fin_min_usr_len,
-    pos_thresh=model_conf.pos_thresh
-)
+else:
+    train_with_conf
 
-log_dir = os.path.join('saves', conf.model)
-logger = Logger(log_dir)
-model_conf.save(os.path.join(logger.log_dir, 'config.json'))
-
-eval_pos, eval_target = dataset.eval_data()
-item_popularity = dataset.item_popularity
-evaluator = Evaluator(eval_pos, eval_target, item_popularity, model_conf.top_k)
-
-model_base = getattr(models, conf.model)
-model = model_base(model_conf, dataset.num_users, dataset.num_items, device)
-
-logger.info(model_conf)
-logger.info(dataset)
-
-trainer = Trainer(
-    dataset=dataset,
-    model=model,
-    evaluator=evaluator,
-    logger=logger,
-    conf=model_conf
-)
-
-trainer.train()
