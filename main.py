@@ -98,7 +98,7 @@ if conf.tune:
                 evaluation_function=train_with_conf,
                 minimize=False,
                 objective_name='ndcg_score',
-                total_trials=1
+                total_trials=5
             )
     print('Final Train')
     best_parameters['best_epoch'] = values[0]['best_epoch']
