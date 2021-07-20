@@ -6,7 +6,7 @@
   "min_item_cnt": 10,
   "max_item_cnt": 10000,
   "fin_min_usr_len": 4,
-  "pos_thresh": 4.0
+  "pos_thresh": 4.0,
   "hidden_dim": 64,
 
   "num_epochs": 300,

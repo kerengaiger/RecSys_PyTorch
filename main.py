@@ -30,7 +30,13 @@ dataset = Dataset(
     data_dir=conf.data_dir,
     data_name=model_conf.data_name,
     train_ratio=model_conf.train_ratio,
-    device=device
+    device=device,
+    min_usr_len=model_conf.min_usr_len,
+    max_usr_len=model_conf.max_usr_len,
+    min_item_cnt=model_conf.min_item_cnt,
+    max_item_cnt=model_conf.max_item_cnt,
+    fin_min_usr_len=model_conf.fin_min_usr_len,
+    pos_thresh=model_conf.pos_thresh
 )
 
 log_dir = os.path.join('saves', conf.model)
