@@ -152,11 +152,12 @@ def preprocess(data_path, save_path, stat_path, sep, min_usr_len, max_usr_len,
         
         idx = np.ones(num_items_user, dtype='bool')
 
-        test_idx = np.random.choice(num_items_user, num_test, replace=False)
         if leave_one_out:
             # in this case, leave the last item of each user for test and the former onr for validation.
             # in this case we don't need validation but we omit it anyway
             test_idx = [-2, -1]
+        else:
+            test_idx = np.random.choice(num_items_user, num_test, replace=False)
         idx[test_idx] = False
         
         if len(group[idx]) == 0:
