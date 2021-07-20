@@ -62,6 +62,7 @@ class Trainer:
         print('Training Finished.')
         score_table.add_row('Best at epoch %d' % self.best_epoch, self.best_score)
         self.logger.info(score_table.to_string())
+        return self.best_score
 
     def evaluate(self):
         score = self.evaluator.evaluate(self.model, self.dataset, self.test_batch_size)
