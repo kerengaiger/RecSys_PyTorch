@@ -6,21 +6,21 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from models.BaseModel import BaseModel
+from .BaseModel import BaseModel
 
 class EASE(BaseModel):
-    def __init__(self, model_conf, num_users, num_items, device):
+    def __init__(self, dataset, hparams, device):
         super(EASE, self).__init__()
-        self.num_users = num_users
-        self.num_items = num_items
+        self.num_users = dataset.num_users
+        self.num_items = dataset.num_items
 
-        self.reg = model_conf.reg
+        self.reg = hparams['reg']
 
         self.device = device
         self.to(self.device)
 
     def forward(self, rating_matrix):
-        G = train_matrix.T @ train_matrix
+        G = (rating_matrix.T @ rating_matrix).toarray()
 
         diag = np.diag_indices(G.shape[0])
         G[diag] += self.reg
@@ -33,35 +33,43 @@ class EASE(BaseModel):
 
         return output
 
-    def train_one_epoch(self, dataset, optimizer, batch_size, verbose):
+    def fit(self, dataset, exp_config, evaluator=None, early_stop=None, loggers=None):
         self.train()
         
         # Solve EASE
-        train_matrix = dataset.train_matrix.toarray()
+        train_matrix = dataset.train_data
         output = self.forward(train_matrix)
 
-        loss = 0.0
-        
-        return loss
+        loss = F.binary_cross_entropy(torch.tensor(train_matrix.toarray()), torch.tensor(output))
 
-    def generate_mask(self, mask_shape):
-        return self.binomial.sample(mask_shape).to(self.device)
+        if evaluator is not None:
+            scores = evaluator.evaluate(self)
+        else:
+            scores = None
+        
+        if loggers is not None:
+            if evaluator is not None:
+                for logger in loggers:
+                    logger.log_metrics(scores, epoch=1)
+        
+        return {'scores': scores, 'loss': loss}
 
     def predict(self, eval_users, eval_pos, test_batch_size):
-        with torch.no_grad():
-            input_matrix = torch.FloatTensor(eval_pos.toarray()).to(self.device)
-            preds = np.zeros_like(input_matrix)
+        input_matrix = eval_pos.toarray()
+        preds = np.zeros_like(input_matrix)
 
-            num_data = input_matrix.shape[0]
-            num_batches = int(np.ceil(num_data / test_batch_size))
-            perm = list(range(num_data))
-            for b in range(num_batches):
-                if (b + 1) * test_batch_size >= num_data:
-                    batch_idx = perm[b * test_batch_size:]
-                else:
-                    batch_idx = perm[b * test_batch_size: (b + 1) * test_batch_size]
-                test_batch_matrix = input_matrix[batch_idx]
-                batch_pred_matrix = (test_batch_matrix @ self.enc_w)
-                batch_pred_matrix.masked_fill(test_batch_matrix.bool(), float('-inf'))
-                preds[batch_idx] = batch_pred_matrix.detach().cpu().numpy()
+        num_data = input_matrix.shape[0]
+        num_batches = int(np.ceil(num_data / test_batch_size))
+        perm = list(range(num_data))
+        for b in range(num_batches):
+            if (b + 1) * test_batch_size >= num_data:
+                batch_idx = perm[b * test_batch_size:]
+            else:
+                batch_idx = perm[b * test_batch_size: (b + 1) * test_batch_size]
+            test_batch_matrix = input_matrix[batch_idx]
+            batch_pred_matrix = (test_batch_matrix @ self.enc_w)
+            preds[batch_idx] = batch_pred_matrix
+            
+        preds[eval_pos.nonzero()] = float('-inf')
+
         return preds

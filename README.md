@@ -16,17 +16,27 @@ Implementations of various top-N recommender systems in [PyTorch](pytorch.org) f
 | DAE, CDAE        | Yao Wu et al., Collaborative denoising auto-encoders for top-n recommender systems. WSDM 2016.[Link](https://alicezheng.org/papers/wsdm16-cdae.pdf) |
 | MultVAE          | Dawen Liang et al., Variational Autoencoders for Collaborative Filtering. WWW 2018. [Link](https://arxiv.org/pdf/1802.05814) |
 | EASE             | Harald Steck, Embarrassingly Shallow Autoencoders for Sparse Data. WWW 2019. [Link](https://arxiv.org/pdf/1905.03375) |
+| NGCF             | Xiang Wang, et al., Neural Graph Collaborative Filtering. SIGIR 2019. [Link](https://arxiv.org/pdf/1905.08108.pdf) |
+| LightGCN         | Xiangnan He, et al., LightGCN: Simplifying and Powering Graph Convolution Network for Recommendation. SIGIR 2020. [Link](https://arxiv.org/abs/2002.02126) |
 
-## To be implemented
+<!-- ## To be implemented
 | Model | Paper                                                                                                                                          |
 |------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
 | GMF, MLP, NeuMF  | Xiangnan He et al., Neural Collaborative Filtering. WWW 2017. [Link](https://arxiv.org/pdf/1708.05031.pdf) |
-| NGCF             | Xiang Wang, et al., Neural Graph Collaborative Filtering. SIGIR 2019. [Link](https://arxiv.org/pdf/1905.08108.pdf) |
-| RecVAE           | Ilya Shenbin et al., RecVAE: A New Variational Autoencoder for Top-N Recommendations with Implicit Feedback. WSDM 2020. [Link](https://arxiv.org/abs/1912.11160) |
+
+| RecVAE           | Ilya Shenbin et al., RecVAE: A New Variational Autoencoder for Top-N Recommendations with Implicit Feedback. WSDM 2020. [Link](https://arxiv.org/abs/1912.11160) | -->
+
+## Enable C++ evaluation
+To evaluate with C++ backend, you have to compile C++ and cython with the following script:
+```
+python setup.py build_ext --inplace
+```
+
+If compiled NOT successfully, ```"evaluation with python backend.."``` will be printed in the beginning.
 
 ## How to run
-1. Choose RecSys model and edit configurations in ```main.py```
-2. Edit configurations of the model you choose in ```conf```
+1. Edit experiment configurations in ```config.py```
+2. Edit model hyperparameters you choose in ```conf/[MODEL_NAME]```
 3. run ```main.py```
 
 ## Implement your own model
