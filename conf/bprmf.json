@@ -1,6 +1,11 @@
 {
-  "data_name": "ml-100k",
+  "data_name": "ml-1m",
   "train_ratio":0.8,
+  "min_usr_len": 3,
+  "max_usr_len": 60,
+  "min_item_cnt": 10,
+  "max_item_cnt": 10000,
+  "fin_min_usr_len": 4,
 
   "hidden_dim": 64,
 
