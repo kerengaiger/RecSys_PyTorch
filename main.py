@@ -34,7 +34,8 @@ def train_with_conf(conf):
         min_item_cnt=model_conf.min_item_cnt,
         max_item_cnt=model_conf.max_item_cnt,
         fin_min_usr_len=model_conf.fin_min_usr_len,
-        pos_thresh=model_conf.pos_thresh
+        pos_thresh=model_conf.pos_thresh,
+        use_validation=model_conf.use_validation
     )
 
     log_dir = os.path.join('saves', conf['model'])
@@ -58,7 +59,8 @@ def train_with_conf(conf):
         logger=logger,
         conf=model_conf
     )
-    return trainer.train()
+    best_score, best_epoch = trainer.train()
+    return {'best_score': (best_score, 0.0), 'best_epoch': (best_epoch, 0.0)}
 
 
 parser = argparse.ArgumentParser()
@@ -82,19 +84,22 @@ if conf.tune:
                     {"name": "seed", "type": "fixed", "value_type": "int", "value": conf.seed},
                     {"name": "data_dir", "type": "fixed", "value_type": "str", "value": conf.data_dir},
                     {"name": "save_dir", "type": "fixed", "value_type": "str", "value": conf.save_dir},
+                    {"name": "use_validation", "type": "fixed", "value_type": "bool", "values": True},
+                    {"name": "early_stop", "type": "fixed", "value_type": "bool", "values": True},
 
                 ],
                 evaluation_function=train_with_conf,
-                minimize=True,
-                objective_name='valid_loss',
+                minimize=False,
+                objective_name='ndcg_score',
                 total_trials=5
             )
-    best_parameters['best_epoch'] = values[0]['early_stop_epoch']
-    pickle.dump(best_parameters, open(args.cnfg_out, "wb"))
-    # change the max epochs
-    # change the way of splitting the dataset - don't seperate to validation
+    best_parameters['best_epoch'] = values[0]['best_epoch']
+    # pickle.dump(best_parameters, open(args.cnfg_out, "wb"))
+    best_parameters['num_epochs'] = best_parameters['best_epoch']
+    best_parameters['use_validation'] = False
+    best_parameters['early_stop'] = False
     train_with_conf(best_parameters)
 
 else:
-    train_with_conf
+    print('need to implement train')
 
