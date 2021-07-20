@@ -84,8 +84,8 @@ if conf.tune:
                     {"name": "seed", "type": "fixed", "value_type": "int", "value": conf.seed},
                     {"name": "data_dir", "type": "fixed", "value_type": "str", "value": conf.data_dir},
                     {"name": "save_dir", "type": "fixed", "value_type": "str", "value": conf.save_dir},
-                    {"name": "use_validation", "type": "fixed", "value_type": "bool", "values": True},
-                    {"name": "early_stop", "type": "fixed", "value_type": "bool", "values": True},
+                    {"name": "use_validation", "type": "fixed", "value_type": "bool", "value": True},
+                    {"name": "early_stop", "type": "fixed", "value_type": "bool", "value": True},
 
                 ],
                 evaluation_function=train_with_conf,
