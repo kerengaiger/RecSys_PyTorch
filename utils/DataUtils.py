@@ -44,7 +44,7 @@ def preprocess(data_path, save_path, stat_path, sep, min_usr_len, max_usr_len,
     
     if binarize_threshold > 0.0:
         print("Binarize ratings greater than or equal to %.f" % binarize_threshold)
-        data = data[data['ratings'] >= binarize_threshold]
+        data = data[data['ratings'] > binarize_threshold]
     
     # convert ratings into implicit feedback
     data['ratings'] = 1.0
@@ -53,6 +53,12 @@ def preprocess(data_path, save_path, stat_path, sep, min_usr_len, max_usr_len,
     data = filter_by_cnt(data, 'user', min_usr_len, max_usr_len)
     data = filter_by_cnt(data, 'item', min_item_cnt, max_item_cnt)
     data = filter_by_cnt(data, 'user', fin_min_usr_len, max_usr_len)
+
+    # final # user, items
+    num_users = len(pd.unique(data.user))
+    num_items = len(pd.unique(data.item))
+
+    print('final user, item:', num_users, num_items)
 
     num_items_by_user = data.groupby('user', as_index=False).size()
     num_items_by_user = num_items_by_user.set_index('user')
