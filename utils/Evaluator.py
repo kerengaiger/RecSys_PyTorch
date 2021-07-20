@@ -17,6 +17,39 @@ class Evaluator:
         self.num_users, self.num_items = self.eval_pos.shape
         self.item_self_information = self.compute_item_self_info(item_popularity)
 
+    def hit_ratio_k(self, model, test_batch_size):
+        model.eval()
+
+        model.before_evaluate()
+
+        eval_users = np.array(list(self.eval_target.keys()))
+
+        pred_matrix = model.predict(eval_users, self.eval_pos, test_batch_size)
+
+        topk = predict_topk(pred_matrix.astype(np.float32), max(self.top_k))
+        hits = 0
+        for usr_id in self.eval_target.keys():
+            if self.eval_target[usr_id] in topk[usr_id, :]:
+                hits += 1
+        return hits / len(self.eval_target.keys())
+
+    def mrr_k(self, model, test_batch_size):
+        model.eval()
+
+        model.before_evaluate()
+
+        eval_users = np.array(list(self.eval_target.keys()))
+
+        pred_matrix = model.predict(eval_users, self.eval_pos, test_batch_size)
+
+        topk = predict_topk(pred_matrix.astype(np.float32), max(self.top_k))
+        cum_rr = 0
+        for usr_id in self.eval_target.keys():
+            if self.eval_target[usr_id] in topk[usr_id, :]:
+                cur_rank = 1 / np.where(topk[usr_id, :] == self.eval_target[usr_id])[0][0] + 1
+                cum_rr += cur_rank
+        return cum_rr / len(self.eval_target.keys())
+
     def evaluate(self, model, dataset, test_batch_size, mean=True, return_topk=False):
         model.eval()
 
