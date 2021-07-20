@@ -20,7 +20,7 @@ def load_data(data_path):
 
 
 def preprocess(data_path, save_path, stat_path, sep, min_usr_len, max_usr_len,
-               min_item_cnt, max_item_cnt, fin_min_usr_len, train_ratio=0.8, binarize_threshold=0.0,
+               min_item_cnt, max_item_cnt, fin_min_usr_len, use_validation, train_ratio=0.8, binarize_threshold=0.0,
                order_by_popularity=True, leave_one_out=True):
     """
     [1]
@@ -155,7 +155,10 @@ def preprocess(data_path, save_path, stat_path, sep, min_usr_len, max_usr_len,
         if leave_one_out:
             # in this case, leave the last item of each user for test and the former onr for validation.
             # in this case we don't need validation but we omit it anyway
-            test_idx = [-2, -1]
+            if use_validation:
+                test_idx = [-2, -1]
+            else:
+                test_idx = [-1]
         else:
             test_idx = np.random.choice(num_items_user, num_test, replace=False)
         idx[test_idx] = False
@@ -168,9 +171,8 @@ def preprocess(data_path, save_path, stat_path, sep, min_usr_len, max_usr_len,
         if len(group[np.logical_not(idx)]) == 0:
             num_zero_test += 1
         else:
-            if leave_one_out:
-                valid_idx = -2
-                idx[valid_idx] = True
+            if leave_one_out and use_validation:
+                idx[-1] = True
             test_list.append(group[np.logical_not(idx)])
     
     train_df = pd.concat(train_list)
