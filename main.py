@@ -60,7 +60,12 @@ def train_with_conf(conf):
         conf=model_conf
     )
     best_score, best_epoch = trainer.train()
-    return {'best_score': (best_score, 0.0), 'best_epoch': (best_epoch, 0.0)}
+    # calculate hit ratio and mrr
+    hr_k = evaluator.hit_ratio_k(model, model_conf.test_batch_size)
+    mrr_k = evaluator.mrr_k(model, model_conf.test_batch_size)
+    print(f'hr_{evaluator.max_k}:{hr_k}')
+    print(f'mrr_{evaluator.max_k}:{mrr_k}')
+    return {'ndcg_score': (best_score, 0.0), 'best_epoch': (best_epoch, 0.0)}
 
 
 parser = argparse.ArgumentParser()
@@ -91,7 +96,7 @@ if conf.tune:
                 evaluation_function=train_with_conf,
                 minimize=False,
                 objective_name='ndcg_score',
-                total_trials=5
+                total_trials=1
             )
     best_parameters['best_epoch'] = values[0]['best_epoch']
     # pickle.dump(best_parameters, open(args.cnfg_out, "wb"))
@@ -99,6 +104,7 @@ if conf.tune:
     best_parameters['use_validation'] = False
     best_parameters['early_stop'] = False
     train_with_conf(best_parameters)
+
 
 else:
     print('need to implement train')
