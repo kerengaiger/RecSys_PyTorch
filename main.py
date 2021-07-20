@@ -98,9 +98,10 @@ if conf.tune:
                 objective_name='ndcg_score',
                 total_trials=1
             )
+    print('Final Train')
     best_parameters['best_epoch'] = values[0]['best_epoch']
     # pickle.dump(best_parameters, open(args.cnfg_out, "wb"))
-    best_parameters['num_epochs'] = best_parameters['best_epoch']
+    best_parameters['num_epochs'] = int(best_parameters['best_epoch'])
     best_parameters['use_validation'] = False
     best_parameters['early_stop'] = False
     train_with_conf(best_parameters)
