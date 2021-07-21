@@ -4,6 +4,7 @@ import pickle
 import numpy as np
 import argparse
 import torch
+import pathlib
 
 import models
 from utils.Params import Params
@@ -66,6 +67,8 @@ def train_with_conf(conf):
     mrr_k = evaluator.mrr_k(model, model_conf.test_batch_size)
     print(f'hr_{evaluator.max_k}:{hr_k}')
     print(f'mrr_{evaluator.max_k}:{mrr_k}')
+    if not conf['early_stop']:
+        torch.save(model, pathlib.Path(conf['save_dir'], 'bpr.pt'))
     return {'validation loss': (best_score, 0.0), 'best_epoch': (best_epoch, 0.0)}
 
 
@@ -102,7 +105,6 @@ if conf.tune:
     print('Final Train')
     best_parameters['best_epoch'] = values[0]['best_epoch']
     print(best_parameters['best_epoch'])
-    # pickle.dump(best_parameters, open(args.cnfg_out, "wb"))
     best_parameters['num_epochs'] = int(best_parameters['best_epoch'])
     best_parameters['use_validation'] = False
     best_parameters['early_stop'] = False
