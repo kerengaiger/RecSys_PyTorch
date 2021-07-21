@@ -15,9 +15,7 @@ from ax.service.managed_loop import optimize
 
 
 def train_with_conf(conf):
-    print('ddddddddddddddddddddddddddddddddddddddddddddddddd')
     model_conf = Params(os.path.join(conf['conf_dir'], conf['model'].lower() + '.json'))
-    print('ddddddddddddddddddddddddddddddddddddddddddddddddd')
     for k in conf.keys():
         model_conf.update_dict(k, conf[k])
 
@@ -52,8 +50,8 @@ def train_with_conf(conf):
     model_base = getattr(models, conf['model'])
     model = model_base(model_conf, dataset.num_users, dataset.num_items, device)
 
-    logger.info(model_conf)
-    logger.info(dataset)
+    # logger.info(model_conf)
+    # logger.info(dataset)
 
     trainer = Trainer(
         dataset=dataset,
