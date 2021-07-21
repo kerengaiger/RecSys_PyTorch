@@ -15,7 +15,9 @@ from ax.service.managed_loop import optimize
 
 
 def train_with_conf(conf):
+    print('ddddddddddddddddddddddddddddddddddddddddddddddddd')
     model_conf = Params(os.path.join(conf['conf_dir'], conf['model'].lower() + '.json'))
+    print('ddddddddddddddddddddddddddddddddddddddddddddddddd')
     for k in conf.keys():
         model_conf.update_dict(k, conf[k])
 
@@ -97,10 +99,11 @@ if conf.tune:
                 evaluation_function=train_with_conf,
                 minimize=True,
                 objective_name='ndcg_score',
-                total_trials=5
+                total_trials=2
             )
     print('Final Train')
     best_parameters['best_epoch'] = values[0]['best_epoch']
+    print(best_parameters['best_epoch'])
     # pickle.dump(best_parameters, open(args.cnfg_out, "wb"))
     best_parameters['num_epochs'] = int(best_parameters['best_epoch'])
     best_parameters['use_validation'] = False
