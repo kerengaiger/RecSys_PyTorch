@@ -27,11 +27,15 @@ class Evaluator:
         pred_matrix = model.predict(eval_users, self.eval_pos, test_batch_size)
 
         topk = predict_topk(pred_matrix.astype(np.float32), max(self.top_k))
-        hits = 0
-        for usr_id in self.eval_target.keys():
-            if self.eval_target[usr_id] in topk[usr_id, :]:
-                hits += 1
-        return hits / len(self.eval_target.keys())
+
+        res = {}
+        for k in self.top_k:
+            hits = 0
+            for usr_id in self.eval_target.keys():
+                if self.eval_target[usr_id] in topk[usr_id, :k]:
+                    hits += 1
+            res[k] = hits / len(self.eval_target.keys())
+        return res
 
     def mrr_k(self, model, test_batch_size):
         model.eval()
@@ -43,12 +47,16 @@ class Evaluator:
         pred_matrix = model.predict(eval_users, self.eval_pos, test_batch_size)
 
         topk = predict_topk(pred_matrix.astype(np.float32), max(self.top_k))
-        cum_rr = 0
-        for usr_id in self.eval_target.keys():
-            if self.eval_target[usr_id] in topk[usr_id, :]:
-                cur_rank = 1 / (np.where(topk[usr_id, :] == self.eval_target[usr_id])[0][0] + 1)
-                cum_rr += cur_rank
-        return cum_rr / len(self.eval_target.keys())
+
+        res = {}
+        for k in self.top_k:
+            cum_rr = 0
+            for usr_id in self.eval_target.keys():
+                if self.eval_target[usr_id] in topk[usr_id, :k]:
+                    cur_rank = 1 / (np.where(topk[usr_id, :] == self.eval_target[usr_id])[0][0] + 1)
+                    cum_rr += cur_rank
+            res[k] = cum_rr / len(self.eval_target.keys())
+        return res
 
     def evaluate(self, model, dataset, test_batch_size, mean=True, return_topk=False):
         model.eval()

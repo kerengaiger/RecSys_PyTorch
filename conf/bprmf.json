@@ -11,5 +11,5 @@
   "early_stop": true,
   "patience": 50,
 
-  "top_k": [20]
+  "top_k": [20,10, 5]
 }
