@@ -96,7 +96,7 @@ if conf.tune:
                 ],
                 evaluation_function=train_with_conf,
                 minimize=True,
-                objective_name='ndcg_score',
+                objective_name='validation loss',
                 total_trials=2
             )
     print('Final Train')
