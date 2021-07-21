@@ -47,7 +47,7 @@ class Trainer:
             epoch, self.num_epochs, epoch_elapsed, train_elapsed, loss, score_str))
 
             # update if ...
-            standard = 'NDCG@100'
+            standard = 'loss'
             if self.best_score is None or score[standard] >= self.best_score[standard]:
                 self.best_epoch = epoch
                 self.best_score = score
