@@ -66,7 +66,7 @@ def train_with_conf(conf):
     mrr_k = evaluator.mrr_k(model, model_conf.test_batch_size)
     print(f'hr_{evaluator.max_k}:{hr_k}')
     print(f'mrr_{evaluator.max_k}:{mrr_k}')
-    return {'ndcg_score': (best_score, 0.0), 'best_epoch': (best_epoch, 0.0)}
+    return {'validation loss': (best_score, 0.0), 'best_epoch': (best_epoch, 0.0)}
 
 
 parser = argparse.ArgumentParser()
