@@ -49,7 +49,7 @@ class Trainer:
 
             # update if ...
             standard = 'loss'
-            if self.best_score is None or score[standard] >= self.best_score[standard]:
+            if self.best_score is None or score[standard] <= self.best_score[standard]:
                 self.best_epoch = epoch
                 self.best_score = score
                 self.best_params = self.model.parameters()
