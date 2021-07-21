@@ -18,7 +18,6 @@ def train_with_conf(conf):
     model_conf = Params(os.path.join(conf['conf_dir'], conf['model'].lower() + '.json'))
     for k in conf.keys():
         model_conf.update_dict(k, conf[k])
-    print(model_conf)
 
     np.random.seed(conf['seed'])
     torch.random.manual_seed(conf['seed'])
