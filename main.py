@@ -97,7 +97,7 @@ if conf.tune:
                 evaluation_function=train_with_conf,
                 minimize=True,
                 objective_name='validation loss',
-                total_trials=2
+                total_trials=5
             )
     print('Final Train')
     best_parameters['best_epoch'] = values[0]['best_epoch']
