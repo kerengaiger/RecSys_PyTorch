@@ -95,7 +95,7 @@ if conf.tune:
 
                 ],
                 evaluation_function=train_with_conf,
-                minimize=False,
+                minimize=True,
                 objective_name='ndcg_score',
                 total_trials=5
             )
