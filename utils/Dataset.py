@@ -20,6 +20,11 @@ class Dataset:
             sep = '::'
             filename = 'ratings.dat'
             self.num_users, self.num_items = 6040, 3952
+        elif data_name == 'netflix':
+            sep = ','
+            self.num_users, self.num_items = 48018, 17770
+            filename = 'netflix_corpus.txt'
+
         else:
             raise NotImplementedError('Choose correct dataset: {ml-100k, ml-1m}')
 
