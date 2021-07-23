@@ -1,6 +1,7 @@
 import math
 import time
 import torch
+import pathlib
 import numpy as np
 from collections import OrderedDict
 
@@ -17,7 +18,7 @@ class Evaluator:
         self.num_users, self.num_items = self.eval_pos.shape
         self.item_self_information = self.compute_item_self_info(item_popularity)
 
-    def hit_ratio_k(self, model, test_batch_size):
+    def hit_ratio_k(self, model, test_batch_size, save_dir):
         model.eval()
 
         model.before_evaluate()
@@ -30,14 +31,16 @@ class Evaluator:
 
         res = {}
         for k in self.top_k:
-            hits = 0
-            for usr_id in self.eval_target.keys():
-                if self.eval_target[usr_id] in topk[usr_id, :k]:
-                    hits += 1
-            res[k] = hits / len(self.eval_target.keys())
+            with open(pathlib.Path(save_dir, f'rr_{k}.pt'), 'w') as hr_file:
+                hits = 0
+                for usr_id in self.eval_target.keys():
+                    if self.eval_target[usr_id] in topk[usr_id, :k]:
+                        hr_file.write(f'{str(usr_id)}, {str(self.eval_target[usr_id])}, 1')
+                        hits += 1
+                res[k] = hits / len(self.eval_target.keys())
         return res
 
-    def mrr_k(self, model, test_batch_size):
+    def mrr_k(self, model, test_batch_size, save_dir):
         model.eval()
 
         model.before_evaluate()
@@ -50,12 +53,14 @@ class Evaluator:
 
         res = {}
         for k in self.top_k:
-            cum_rr = 0
-            for usr_id in self.eval_target.keys():
-                if self.eval_target[usr_id] in topk[usr_id, :k]:
-                    cur_rank = 1 / (np.where(topk[usr_id, :] == self.eval_target[usr_id])[0][0] + 1)
-                    cum_rr += cur_rank
-            res[k] = cum_rr / len(self.eval_target.keys())
+            with open(pathlib.Path(save_dir, f'rr_{k}.pt'), 'w') as rr_file:
+                cum_rr = 0
+                for usr_id in self.eval_target.keys():
+                    if self.eval_target[usr_id] in topk[usr_id, :k]:
+                        cur_rank = 1 / (np.where(topk[usr_id, :] == self.eval_target[usr_id])[0][0] + 1)
+                        rr_file.write(f'{str(usr_id)}, {str(self.eval_target[usr_id])}, {cur_rank}')
+                        cum_rr += cur_rank
+                res[k] = cum_rr / len(self.eval_target.keys())
         return res
 
     def evaluate(self, model, dataset, test_batch_size, mean=True, return_topk=False):
