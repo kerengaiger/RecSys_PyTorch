@@ -24,9 +24,13 @@ class Dataset:
             sep = ','
             self.num_users, self.num_items = 48018, 17770
             filename = 'netflix_corpus.csv'
+        elif data_name == 'yahoo':
+            sep = ','
+            self.num_users, self.num_items = 30000, 19989
+            filename = 'netflix_corpus.csv'
 
         else:
-            raise NotImplementedError('Choose correct dataset: {ml-100k, ml-1m}')
+            raise NotImplementedError('Choose correct dataset: {ml-100k, ml-1m, netflix, yahoo}')
 
         data_path = os.path.join(data_dir, data_name, data_name + '.data')
         stat_path = os.path.join(data_dir, data_name, data_name + '.stat')
