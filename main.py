@@ -16,7 +16,7 @@ from ax.service.managed_loop import optimize
 
 
 def train_with_conf(conf):
-    model_conf = Params(os.path.join(conf['conf_dir'], f'{conf["model"].lower()}_{conf["data_name"]}_.json'))
+    model_conf = Params(os.path.join(conf['conf_dir'], f'{conf["model"].lower()}_{conf["data_name"]}.json'))
     for k in conf.keys():
         model_conf.update_dict(k, conf[k])
 
