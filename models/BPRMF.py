@@ -46,19 +46,19 @@ class BPRMF(BaseModel):
             batch_users = user_ids[batch_idx]
             batch_items = item_ids[batch_idx]
             batch_negs = neg_ids[batch_idx]
+            with torch.autograd.detect_anomaly():
+                pos_ratings = self.forward(batch_users, batch_items)
+                neg_ratings = self.forward(batch_users, batch_negs)
 
-            pos_ratings = self.forward(batch_users, batch_items)
-            neg_ratings = self.forward(batch_users, batch_negs)
+                log_sigmoid_diff = F.sigmoid(pos_ratings - neg_ratings).log()
+                batch_loss = -torch.sum(log_sigmoid_diff)
+                batch_loss.backward()
+                optimizer.step()
 
-            log_sigmoid_diff = F.sigmoid(pos_ratings - neg_ratings).log()
-            batch_loss = -torch.sum(log_sigmoid_diff)
-            batch_loss.backward()
-            optimizer.step()
+                loss += batch_loss
 
-            loss += batch_loss
-
-            if verbose and b % 50 == 0:
-                print('(%3d / %3d) loss = %.4f' % (b, num_batches, batch_loss))
+                if verbose and b % 50 == 0:
+                    print('(%3d / %3d) loss = %.4f' % (b, num_batches, batch_loss))
         return loss
 
     def predict_batch_users(self, user_ids):
