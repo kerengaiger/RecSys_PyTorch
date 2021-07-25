@@ -36,7 +36,11 @@ class Evaluator:
                 for usr_id in self.eval_target.keys():
                     if self.eval_target[usr_id] in topk[usr_id, :k]:
                         hr_file.write(f'{str(usr_id)}, {str(self.eval_target[usr_id])}, 1')
+                        hr_file.write('\n')
                         hits += 1
+                    else:
+                        hr_file.write(f'{str(usr_id)}, {str(self.eval_target[usr_id])}, 0')
+                        hr_file.write('\n')
                 res[k] = hits / len(self.eval_target.keys())
         return res
 
@@ -59,7 +63,11 @@ class Evaluator:
                     if self.eval_target[usr_id] in topk[usr_id, :k]:
                         cur_rank = 1 / (np.where(topk[usr_id, :] == self.eval_target[usr_id])[0][0] + 1)
                         rr_file.write(f'{str(usr_id)}, {str(self.eval_target[usr_id])}, {cur_rank}')
+                        rr_file.write('\n')
                         cum_rr += cur_rank
+                    else:
+                        rr_file.write(f'{str(usr_id)}, {str(self.eval_target[usr_id])}, 0')
+                        rr_file.write('\n')
                 res[k] = cum_rr / len(self.eval_target.keys())
         return res
 
