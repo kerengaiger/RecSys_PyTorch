@@ -68,7 +68,7 @@ def train_with_conf(conf):
     print(f'hr_{evaluator.max_k}:{hr_k}')
     print(f'mrr_{evaluator.max_k}:{mrr_k}')
     if not conf['early_stop']:
-        torch.save(model, pathlib.Path(conf['save_dir'], 'bpr.pt'))
+        torch.save(model, pathlib.Path(conf['save_dir'], model_conf.data_name + '_bpr.pt'))
     return {'validation loss': (best_score, 0.0), 'best_epoch': (best_epoch, 0.0)}
 
 
