@@ -89,6 +89,7 @@ if conf.tune:
                     {"name": "learning_rate", "type": "range", "value_type": "float", "bounds": [5e-3, 2e-2]},
                     {"name": "hidden_dim", "type": "choice", "value_type": "int", "values": [12, 17, 20, 25, 30, 50, 100]},
                     {"name": "batch_size", "type": "choice", "value_type": "int", "values": [100, 500, 700, 1000, 3000, 4096]},
+                    {"name": "data_name", "type": "fixed", "value_type": "str", "value": conf.data_name},
                     {"name": "conf_dir", "type": "fixed", "value_type": "str", "value": conf.conf_dir},
                     {"name": "model", "type": "fixed", "value_type": "str", "value": conf.model},
                     {"name": "seed", "type": "fixed", "value_type": "int", "value": conf.seed},
