@@ -16,7 +16,7 @@ from ax.service.managed_loop import optimize
 
 
 def train_with_conf(conf):
-    model_conf = Params(os.path.join(conf['conf_dir'], conf['model'].lower() + '.json'))
+    model_conf = Params(os.path.join(conf['conf_dir'], f'{conf["model"].lower()}_{conf["data_name"]}_.json'))
     for k in conf.keys():
         model_conf.update_dict(k, conf[k])
 
@@ -74,6 +74,7 @@ def train_with_conf(conf):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model', type=str, default='EASE')
+parser.add_argument('--data_name', type=str, default='ml-1m')
 parser.add_argument('--tune', action='store_true')
 parser.add_argument('--data_dir', type=str, default='./data')
 parser.add_argument('--save_dir', type=str, default='./saves')
