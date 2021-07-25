@@ -63,8 +63,8 @@ def train_with_conf(conf):
     )
     best_score, best_epoch = trainer.train()
     # calculate hit ratio and mrr
-    hr_k = evaluator.hit_ratio_k(model, model_conf.test_batch_size, conf['save_dir'])
-    mrr_k = evaluator.mrr_k(model, model_conf.test_batch_size, conf['save_dir'])
+    hr_k = evaluator.hit_ratio_k(model, model_conf.test_batch_size, model_conf.data_name, conf['save_dir'])
+    mrr_k = evaluator.mrr_k(model, model_conf.test_batch_size, model_conf.data_name, conf['save_dir'])
     print(f'hr_{evaluator.max_k}:{hr_k}')
     print(f'mrr_{evaluator.max_k}:{mrr_k}')
     if not conf['early_stop']:

@@ -18,7 +18,7 @@ class Evaluator:
         self.num_users, self.num_items = self.eval_pos.shape
         self.item_self_information = self.compute_item_self_info(item_popularity)
 
-    def hit_ratio_k(self, model, test_batch_size, save_dir):
+    def hit_ratio_k(self, model, test_batch_size, data_name, save_dir):
         model.eval()
 
         model.before_evaluate()
@@ -31,7 +31,7 @@ class Evaluator:
 
         res = {}
         for k in self.top_k:
-            with open(pathlib.Path(save_dir, f'rr_{k}.pt'), 'w') as hr_file:
+            with open(pathlib.Path(save_dir, f'hr_{data_name}_{k}.pt'), 'w') as hr_file:
                 hits = 0
                 for usr_id in self.eval_target.keys():
                     if self.eval_target[usr_id] in topk[usr_id, :k]:
@@ -40,7 +40,7 @@ class Evaluator:
                 res[k] = hits / len(self.eval_target.keys())
         return res
 
-    def mrr_k(self, model, test_batch_size, save_dir):
+    def mrr_k(self, model, test_batch_size, data_name, save_dir):
         model.eval()
 
         model.before_evaluate()
@@ -53,7 +53,7 @@ class Evaluator:
 
         res = {}
         for k in self.top_k:
-            with open(pathlib.Path(save_dir, f'rr_{k}.pt'), 'w') as rr_file:
+            with open(pathlib.Path(save_dir, f'rr_{data_name}_{k}.pt'), 'w') as rr_file:
                 cum_rr = 0
                 for usr_id in self.eval_target.keys():
                     if self.eval_target[usr_id] in topk[usr_id, :k]:
