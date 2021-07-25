@@ -31,7 +31,7 @@ class Evaluator:
 
         res = {}
         for k in self.top_k:
-            with open(pathlib.Path(save_dir, f'hr_{data_name}_{k}.pt'), 'w') as hr_file:
+            with open(pathlib.Path(save_dir, f'hr_{data_name}_{k}.csv'), 'w') as hr_file:
                 hits = 0
                 for usr_id in self.eval_target.keys():
                     if self.eval_target[usr_id] in topk[usr_id, :k]:
@@ -53,7 +53,7 @@ class Evaluator:
 
         res = {}
         for k in self.top_k:
-            with open(pathlib.Path(save_dir, f'rr_{data_name}_{k}.pt'), 'w') as rr_file:
+            with open(pathlib.Path(save_dir, f'rr_{data_name}_{k}.csv'), 'w') as rr_file:
                 cum_rr = 0
                 for usr_id in self.eval_target.keys():
                     if self.eval_target[usr_id] in topk[usr_id, :k]:
