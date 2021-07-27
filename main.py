@@ -86,7 +86,7 @@ conf = parser.parse_args()
 if conf.tune:
     best_parameters, values, _experiment, _cur_model = optimize(
                 parameters=[
-                    {"name": "learning_rate", "type": "range", "value_type": "float", "bounds": [1e-3, 5e-3]},
+                    {"name": "learning_rate", "type": "range", "value_type": "float", "bounds": [5e-3, 1e-3]},
                     {"name": "hidden_dim", "type": "choice", "value_type": "int", "values": [12, 17, 20, 25, 30, 50, 100]},
                     {"name": "batch_size", "type": "choice", "value_type": "int", "values": [1024, 4096, 3200, 6000]},
                     {"name": "data_name", "type": "fixed", "value_type": "str", "value": conf.data_name},
