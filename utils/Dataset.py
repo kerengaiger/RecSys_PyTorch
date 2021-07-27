@@ -35,6 +35,7 @@ class Dataset:
         data_path = os.path.join(data_dir, data_name, data_name + '.data')
         stat_path = os.path.join(data_dir, data_name, data_name + '.stat')
 
+        print('gggg')
         if os.path.exists(data_path) and os.path.exists(data_path):
             print('Already preprocessed. Load from file.')
         else:
