@@ -35,11 +35,7 @@ class Dataset:
         data_path = os.path.join(data_dir, data_name, data_name + '.data')
         stat_path = os.path.join(data_dir, data_name, data_name + '.stat')
 
-        print('gggg')
-        if os.path.exists(data_path) and os.path.exists(data_path):
-            print('Already preprocessed. Load from file.')
-        else:
-            preprocess(os.path.join(data_dir, data_name, filename), data_path, stat_path, sep, min_usr_len, max_usr_len,
+        preprocess(os.path.join(data_dir, data_name, filename), data_path, stat_path, sep, min_usr_len, max_usr_len,
                        min_item_cnt, max_item_cnt, fin_min_usr_len, use_validation,
                        binarize_threshold=pos_thresh)
 
