@@ -26,7 +26,8 @@ class Trainer:
     def train(self):
         self.logger.info(self.conf)
         if len(list(self.model.parameters())) > 0:
-            optimizer = torch.optim.Adam(self.model.parameters(), self.lr)
+            # optimizer = torch.optim.Adam(self.model.parameters(), self.lr)
+            optimizer = torch.optim.Adagrad(self.model.parameters(), lr=self.lr)
         else:
             optimizer = None
         score_table = Table(table_name='Scores')
