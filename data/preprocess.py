@@ -6,16 +6,21 @@ import numpy as np
 from typing import List, Dict, Union
 from pathlib import Path
 
-def split_into_tr_val_te(data:pd.DataFrame, generalization:str, num_valid_items:Union[int, float], num_test_items:Union[int, float], 
+def split_into_tr_val_te(data:pd.DataFrame, generalization:str, use_validation:bool, num_valid_items:Union[int, float], num_test_items:Union[int, float],
                         holdout_users:int, split_random:bool, user2id:Dict, item2id:Dict) -> Dict:
     prepro_data_dict = {}
     if generalization == 'weak':
         # Split data into train, valid, test
         train_data, test_data = split_input_target_by_users(data, test_ratio=num_valid_items, split_random=split_random)
-        train_data, valid_data = split_input_target_by_users(train_data, test_ratio=num_test_items, split_random=split_random)
+        if use_validation:
+            new_data_to_split = train_data
+        else:
+            new_data_to_split = data
 
-        prepro_data_dict['train'] = train_data
+        train_data, valid_data = split_input_target_by_users(new_data_to_split, test_ratio=num_test_items,
+                                                                 split_random=split_random)
         prepro_data_dict['valid'] = valid_data
+        prepro_data_dict['train'] = train_data
         prepro_data_dict['test'] = test_data
     else:
         user_ids = np.array(list(user2id.values()))
