@@ -6,7 +6,6 @@ from utils.stats import Statistics
 from .. import LOO_METRICS
 # from evaluation.backend import LOO_METRICS
 
-# LOO_METRICS = ['HR', 'NDCG']
 
 def compute_loo_metrics_py(pred, target, ks):
     score_cumulator = OrderedDict()
@@ -23,8 +22,10 @@ def compute_loo_metrics_py(pred, target, ks):
         for k in ks:
             hr_k = 1 if hit_at_k <= k else 0
             ndcg_k = 1 / math.log(hit_at_k + 1, 2) if hit_at_k <= k else 0
+            mrr_k = hit_at_k if hit_at_k <= k else 0
 
             score_cumulator['HR'][k].update(hr_k)
             score_cumulator['NDCG'][k].update(ndcg_k)
+            score_cumulator['MRR'][k].update(mrr_k)
 
     return score_cumulator
