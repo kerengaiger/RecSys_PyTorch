@@ -13,7 +13,7 @@ def compute_loo_metrics_py(pred, target, ks):
         score_cumulator[metric] = {k: Statistics('%s@%d' % (metric, k)) for k in ks}
     
     max_k = max(ks)
-    with open('hr_out', 'w') as hr_file, open('rr_out','w') as rr_file:
+    with open('hr_out', 'w') as hr_file, open('rr_out', 'w') as rr_file:
         for idx, u in enumerate(target):
             pred_u = pred[idx]
             target_u = target[u][0]
