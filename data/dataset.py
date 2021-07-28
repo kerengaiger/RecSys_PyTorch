@@ -186,6 +186,7 @@ class UIRTDataset(object):
                 prepro_data_dict = split_into_tr_val_te(
                     data=raw_data, 
                     generalization=self.generalization,
+                    use_validation=self.use_validation,
                     num_valid_items=self.leave_k,
                     num_test_items=self.leave_k,
                     holdout_users=self.holdout_users,
@@ -196,6 +197,7 @@ class UIRTDataset(object):
                 prepro_data_dict = split_into_tr_val_te(
                     data=raw_data, 
                     generalization=self.generalization,
+                    use_validation=self.use_validation,
                     num_valid_items=self.valid_ratio,
                     num_test_items=self.test_ratio,
                     holdout_users=self.holdout_users,
