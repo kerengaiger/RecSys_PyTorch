@@ -8,10 +8,17 @@ class DatasetConfig:
     data_path:str='datasets/ml-100k/u.data'
     dataname:str='ml-1m'
     separator:str='\t'
-    binarize_threshold:float=0.0
+    binarize_threshold:float=4.0
     implicit:bool=True
+    min_usr_len:int=1
+    max_usr_len:int=60
+    min_items_cnt:int=10
+    max_items_cnt:int=10000
+    final_usr_len:int=3
     min_item_per_user:int=10
     min_user_per_item:int=1
+    max_item_per_user:int=60
+    max_user_per_item:int=100000
 
     protocol:str='holdout' # holdout, leave_one_out
     generalization:str='weak' # weak/strong
@@ -29,7 +36,7 @@ class EvaluatorConfig:
 @dataclass
 class EarlyStopConfig:
     early_stop:int=25
-    early_stop_measure:str='NDCG@10'
+    early_stop_measure:str='loss'
 
 @dataclass
 class ExperimentConfig:

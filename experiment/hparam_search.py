@@ -2,10 +2,17 @@ import os
 import time
 import copy
 
+import torch
 import optuna
-from experiment import fit_model
-from utils import ResultTable, set_random_seed
-from logger import Logger
+from trainer.helper_func import fit_model
+from utils.result_table import ResultTable
+from utils.general import set_random_seed
+from loggers.base import Logger
+from experiment.early_stop import EarlyStop
+from models.LightGCN import LightGCN
+from data.dataset import UIRTDataset
+from config import load_config
+
 
 class GridSearch:
     def __init__(self, model_base, dataset, early_stop, config, device, seed=2020, num_parallel=1):
@@ -329,3 +336,16 @@ class BayesianSearch:
         best_config.update_params(self.best_params)
 
         return best_dir, best_valid_score, best_config['Model']
+
+
+if __name__ == '__main__':
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    config = load_config()
+    early_stop_config = config.early_stop
+    early_stop = EarlyStop(**early_stop_config)
+    dataset_config = config.dataset
+    dataset = UIRTDataset(**dataset_config)
+    light_gcn = LightGCN(dataset, config.hparams, device)
+    search_result_table, search_time = BayesianSearch(light_gcn, dataset, early_stop, config, device)
+    print(search_result_table)
+    print(search_time)
