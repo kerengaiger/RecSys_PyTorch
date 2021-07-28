@@ -1,5 +1,5 @@
 HOLDOUT_METRICS = ['Prec', 'Recall', 'NDCG']
-LOO_METRICS = ['HR', 'NDCG']
+LOO_METRICS = ['HR', 'NDCG', 'MRR']
 
 try:
     from .cython.loo import compute_loo_metrics_cy
