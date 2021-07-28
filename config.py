@@ -14,24 +14,24 @@ class DatasetConfig:
     max_usr_len:int=60
     min_items_cnt:int=10
     max_items_cnt:int=10000
-    final_usr_len:int=3
+    final_usr_len:int=4
     min_item_per_user:int=10
     min_user_per_item:int=1
     max_item_per_user:int=60
     max_user_per_item:int=100000
 
-    protocol:str='holdout' # holdout, leave_one_out
+    protocol:str='leave_one_out' # holdout, leave_one_out
     generalization:str='weak' # weak/strong
-    holdout_users:int=600
+    holdout_users:int=1
 
-    valid_ratio:float=0.1
-    test_ratio:float=0.2
+    valid_ratio:float=0.0
+    test_ratio:float=0.0
     leave_k:int=1
-    split_random:bool=True
+    split_random:bool=False
 
 @dataclass
 class EvaluatorConfig:
-    ks:List[int] = field(default_factory=lambda: [5])
+    ks:List[int] = field(default_factory=lambda: [20, 10, 5])
 
 @dataclass
 class EarlyStopConfig:
@@ -42,13 +42,13 @@ class EarlyStopConfig:
 class ExperimentConfig:
     debug:bool=False
     save_dir:str='saves'
-    num_epochs:int=10
+    num_epochs:int=300
     batch_size:int=256
     verbose:int=0
     print_step:int=1
     test_step:int=1
     test_from:int=1
-    model_name:str='EASE'
+    model_name:str='LightGCN'
     num_exp:int=5
     seed:int=2020
     gpu:int=0
