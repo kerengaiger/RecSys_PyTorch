@@ -14,7 +14,6 @@ from ax.service.managed_loop import optimize
 
 
 def train_with_conf(hparams_cnfg):
-    print(hparams_cnfg)
     config = load_config()
 
     exp_config = config.experiment
@@ -49,6 +48,8 @@ def train_with_conf(hparams_cnfg):
     logger = FileLogger(log_dir)
     csv_logger = CSVLogger(log_dir)
 
+    print('print config ***************************')
+    print(config)
     # Save log & dataset config.
     logger.info(config)
     logger.info(dataset)
@@ -57,6 +58,7 @@ def train_with_conf(hparams_cnfg):
     evaluator = Evaluator(valid_input, valid_target, protocol=dataset.protocol, ks=config.evaluator.ks)
 
     model = model_base(dataset, hparams_cnfg, device)
+    print(model)
 
     ret = model.fit(dataset, exp_config, evaluator=evaluator,early_stop=early_stop, loggers=[logger, csv_logger])
     print(ret['scores'])
