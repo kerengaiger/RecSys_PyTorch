@@ -19,6 +19,7 @@ def compute_loo_metrics_py(pred, target, ks):
             target_u = target[u][0]
 
             hit_at_k = np.where(pred_u == target_u)[0][0] + 1 if target_u in pred_u else max_k + 1
+            print(hit_at_k)
 
             hr_ks = []
             rr_ks = []
