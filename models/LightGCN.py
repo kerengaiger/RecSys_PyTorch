@@ -95,6 +95,7 @@ class LightGCN(BaseModel):
             # Evaluate if necessary
             if evaluator is not None and epoch >= exp_config.test_from and epoch % exp_config.test_step == 0:
                 scores = evaluator.evaluate(self)
+                scores['train_loss'] = epoch_loss
                 epoch_summary.update(scores)
                 
                 if loggers is not None:
