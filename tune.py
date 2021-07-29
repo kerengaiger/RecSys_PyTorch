@@ -37,7 +37,7 @@ def train_with_conf(hparams_cnfg):
     """ 
         Early stop
     """
-    early_stop = EarlyStop(**config['EarlyStop'])
+    early_stop = EarlyStop(**config.early_stop)
 
     """ 
         Model base class
