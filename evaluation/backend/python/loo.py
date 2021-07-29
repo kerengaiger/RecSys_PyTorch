@@ -33,6 +33,8 @@ def compute_loo_metrics_py(pred, target, ks):
 
                 score_cumulator['HR'][k].update(hr_k)
                 score_cumulator['NDCG'][k].update(ndcg_k)
+                print(type(rr_k))
+                print(isinstance(rr_k, (int, float, np.int, np.float)))
                 score_cumulator['MRR'][k].update(rr_k)
 
             hr_file.write(','.join(hr_ks))
