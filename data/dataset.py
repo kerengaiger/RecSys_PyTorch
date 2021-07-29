@@ -161,9 +161,9 @@ class UIRTDataset(object):
             num_items_by_user = num_items_by_user.set_index('user')
 
             num_items = len(pd.unique(raw_data.item))
-            print('# item after filter (min %d users): %d' % (self.min_user_per_item, num_items))
+            print('# item after filter (min %d users): %d' % (self.min_items_cnt, num_items))
             num_users = len(pd.unique(raw_data.user))
-            print('# user after filter (min %d items): %d' % (self.min_item_per_user, num_users))
+            print('# user after filter (min %d items): %d' % (self.min_usr_len, num_users))
 
             # Build user old2new id map
             # user_frame = num_items_by_user.to_frame()
@@ -229,12 +229,12 @@ class UIRTDataset(object):
         if self._prepro_cache_dir is None:
             random_or_not = 'random' if self.split_random else 'time'
             if self.protocol == 'leave_one_out':
-                protocol_name = f'loo_{self.leave_k}_{self.generalization}_{random_or_not}_minUI_{self.min_item_per_user}_{self.min_user_per_item}_seed{self.seed}/'
+                protocol_name = f'loo_{self.leave_k}_{self.generalization}_{random_or_not}_minUI_{self.min_usr_len}_{self.min_items_cnt}_seed{self.seed}/'
             elif self.protocol == 'holdout':
                 random_or_not = 'random' if self.split_random else 'time'
                 valid_ratio_str = '%.2f' % self.valid_ratio
                 test_ratio_str = '%.2f' % self.test_ratio
-                protocol_name = f'holdout_{valid_ratio_str}_{test_ratio_str}_{self.generalization}_{random_or_not}_minUI_{self.min_item_per_user}_{self.min_user_per_item}_seed{self.seed}/'
+                protocol_name = f'holdout_{valid_ratio_str}_{test_ratio_str}_{self.generalization}_{random_or_not}_minUI_{self.min_usr_len}_{self.min_items_cnt}_seed{self.seed}/'
             else:
                 raise ValueError(f'Incorrect protocol passed ({self.protocol}). Choose between leave_one_out, holdout, hold_user_out')
             
