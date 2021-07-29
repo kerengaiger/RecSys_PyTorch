@@ -179,7 +179,7 @@ class LightGCN(BaseModel):
         embs = [all_emb]
         if self.node_dropout > 0:
             if self.training:
-                g_droped = self.__dropout(graph, self.node_dropout)
+                g_droped = self.__dropout(self.node_dropout)
             else:
                 g_droped = graph        
         else:
