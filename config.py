@@ -11,7 +11,7 @@ class DatasetConfig:
     binarize_threshold:float=4.0
     implicit:bool=True
     min_usr_len:int=1
-    max_usr_len:int=60
+    max_usr_len:int=1000
     min_items_cnt:int=10
     max_items_cnt:int=10000
     final_usr_len:int=4
