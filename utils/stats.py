@@ -12,7 +12,7 @@ class Statistics:
             self.history += val
             self.sum += sum(val)
             self.cnt += len(val)
-        elif isinstance(val, (int, float, np.int, np.float)):
+        elif isinstance(val, (int, float, np.int64, np.float64)):
             self.history.append(val)
             self.sum += val
             self.cnt += 1

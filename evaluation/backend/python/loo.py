@@ -26,15 +26,11 @@ def compute_loo_metrics_py(pred, target, ks):
                 hr_k = 1 if hit_at_k <= k else 0
                 ndcg_k = 1 / math.log(hit_at_k + 1, 2) if hit_at_k <= k else 0
                 rr_k = hit_at_k if hit_at_k <= k else 0
-                print(rr_k)
-                print(type(rr_k))
                 hr_ks.append(str(hr_k))
                 rr_ks.append(str(rr_k))
 
                 score_cumulator['HR'][k].update(hr_k)
                 score_cumulator['NDCG'][k].update(ndcg_k)
-                print(type(rr_k))
-                print(isinstance(rr_k, (int, float, np.int, np.float)))
                 score_cumulator['MRR'][k].update(rr_k)
 
             hr_file.write(','.join(hr_ks))
