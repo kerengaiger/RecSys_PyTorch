@@ -32,7 +32,7 @@ class EvaluatorConfig:
 @dataclass
 class EarlyStopConfig:
     early_stop:int=25
-    early_stop_measure:str='loss'
+    early_stop_measure:str='HR@20'
 
 @dataclass
 class ExperimentConfig:
