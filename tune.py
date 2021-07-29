@@ -58,10 +58,10 @@ def train_with_conf(hparams_cnfg):
     model = model_base(dataset, hparams_cnfg, device)
 
     ret = model.fit(dataset, exp_config, evaluator=evaluator,early_stop=early_stop, loggers=[logger, csv_logger])
-    # print(ret['scores'])
+    print(ret['scores'])
 
     csv_logger.save()
-    return {'validation loss': ret['scores']}
+    return {'HR@20': ret['scores'], 'best': 30}
 
 
 if __name__ == '__main__':
@@ -80,7 +80,7 @@ if __name__ == '__main__':
                 ],
                 evaluation_function=train_with_conf,
                 minimize=False,
-                objective_name='validation loss',
+                objective_name='HR@20',
                 total_trials=5
             )
     print('Final Train')
