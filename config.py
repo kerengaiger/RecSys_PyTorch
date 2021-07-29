@@ -15,10 +15,6 @@ class DatasetConfig:
     min_items_cnt:int=10
     max_items_cnt:int=10000
     final_usr_len:int=4
-    min_item_per_user:int=10
-    min_user_per_item:int=1
-    max_item_per_user:int=60
-    max_user_per_item:int=100000
 
     protocol:str='leave_one_out' # holdout, leave_one_out
     generalization:str='weak' # weak/strong
