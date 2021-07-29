@@ -61,7 +61,7 @@ def train_with_conf(hparams_cnfg):
     print(ret['scores'])
 
     csv_logger.save()
-    return {'HR@20': (ret['scores'], 0.0)}
+    return {'HR@20': (ret['scores']['HR@20'], 0.0)}
 
 
 if __name__ == '__main__':
