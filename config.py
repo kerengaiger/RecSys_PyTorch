@@ -5,7 +5,7 @@ from omegaconf import OmegaConf
 
 @dataclass
 class DatasetConfig:
-    data_path:str='datasets/ml-100k/u.data'
+    data_path:str='datasets/ml-1m/ratings.dat'
     dataname:str='ml-1m'
     separator:str='\t'
     binarize_threshold:float=4.0
