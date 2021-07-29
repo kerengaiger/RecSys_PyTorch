@@ -50,7 +50,7 @@ class UIRTDataset(object):
         def transform(df):
             if self.implicit:
                 if self.binarize_threshold > 0:
-                    df = df[df['rating'] >= self.threshold]
+                    df = df[df['rating'] >= self.binarize_threshold]
                 df.rating = np.ones(len(df))
             return df
         
@@ -134,6 +134,9 @@ class UIRTDataset(object):
 
             print('# raw items: %d' % (raw_num_users))
             print('# raw users: %d' % (raw_num_items))
+
+            # Filter positive threshold
+            raw_data = raw_data[raw_data['rating'] >= self.binarize_threshold]
 
             # Filter users
             num_items_by_user = raw_data.groupby('user', as_index=False).size()
