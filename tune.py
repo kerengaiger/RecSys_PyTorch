@@ -14,6 +14,7 @@ from ax.service.managed_loop import optimize
 
 
 def train_with_conf(hparams_cnfg):
+    print(hparams_cnfg)
     config = load_config()
 
     exp_config = config.experiment
