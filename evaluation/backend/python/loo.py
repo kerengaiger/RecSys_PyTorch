@@ -25,7 +25,7 @@ def compute_loo_metrics_py(pred, target, ks):
             for k in ks:
                 hr_k = 1 if hit_at_k <= k else 0
                 ndcg_k = 1 / math.log(hit_at_k + 1, 2) if hit_at_k <= k else 0
-                rr_k = hit_at_k if hit_at_k <= k else 0
+                rr_k = (1 / hit_at_k) if hit_at_k <= k else 0
                 hr_ks.append(str(hr_k))
                 rr_ks.append(str(rr_k))
 
