@@ -47,9 +47,8 @@ def train_with_conf(hparams_cnfg):
     log_dir = make_log_dir(os.path.join(exp_config.save_dir, model_name))
     logger = FileLogger(log_dir)
     csv_logger = CSVLogger(log_dir)
+    config.hparams = hparams_cnfg
 
-    print('print config ***************************')
-    print(config)
     # Save log & dataset config.
     logger.info(config)
     logger.info(dataset)
@@ -58,7 +57,6 @@ def train_with_conf(hparams_cnfg):
     evaluator = Evaluator(valid_input, valid_target, protocol=dataset.protocol, ks=config.evaluator.ks)
 
     model = model_base(dataset, hparams_cnfg, device)
-    print(model)
 
     ret = model.fit(dataset, exp_config, evaluator=evaluator,early_stop=early_stop, loggers=[logger, csv_logger])
     print(ret['scores'])
@@ -71,7 +69,7 @@ if __name__ == '__main__':
     best_parameters, values, _experiment, _cur_model = optimize(
                 parameters=[
                     {"name": "emb_dim", "type": "choice", "value_type": "int", "values": [20, 32, 64, 128]},
-                    {"name": "num_layers", "type": "choice", "value_type": "int", "values": [2, 4, 6]},
+                    {"name": "num_layers", "type": "choice", "value_type": "int", "values": [2, 4, 6, 10, 12]},
                     {"name": "node_dropout", "type": "range", "value_type": "float", "bounds": [0.2, 0.5]},
                     {"name": "split", "type": "fixed", "value_type": "bool", "value": False},
                     {"name": "num_folds", "type": "fixed", "value_type": "int", "value": 100},
