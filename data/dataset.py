@@ -111,7 +111,6 @@ class UIRTDataset(object):
         user2id_file = self._prepro_cache_dir / 'user_map'
         item2id_file = self._prepro_cache_dir / 'item_map'
         files_to_check = list(prepro_dict.values()) + [user2id_file, item2id_file]
-        print(files_to_check)
         if self._check_preprocssed(files_to_check):
             print('Load from preprocssed')
         else:
@@ -137,7 +136,6 @@ class UIRTDataset(object):
 
             # Filter positive threshold
             raw_data = raw_data[raw_data['rating'] > self.binarize_threshold]
-            print(raw_data.shape[0])
 
             # Filter users
             num_items_by_user = raw_data.groupby('user', as_index=False).size()
@@ -145,7 +143,6 @@ class UIRTDataset(object):
             user_filter_idx = raw_data['user'].isin(num_items_by_user.index[(num_items_by_user['size'] > self.min_usr_len)
                                                                             & (num_items_by_user['size'] < self.max_usr_len)])
             raw_data = raw_data[user_filter_idx]
-            print(raw_data.shape[0])
 
             # Filter items
             num_users_by_item = raw_data.groupby('item', as_index=False).size()
@@ -155,7 +152,6 @@ class UIRTDataset(object):
             raw_data = raw_data[item_filter_idx]
             num_users_by_item = raw_data.groupby('item', as_index=False).size()
             num_users_by_item = num_users_by_item.set_index('item')
-            print(raw_data.shape[0])
 
             # Filter users
             num_items_by_user = raw_data.groupby('user', as_index=False).size()
