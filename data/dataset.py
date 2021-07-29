@@ -11,7 +11,7 @@ from utils.types import df_to_sparse
 
 class UIRTDataset(object):
     def __init__(self, data_path:str, dataname:Optional[str]=None, separator:str=',', binarize_threshold:Union[int, float]=0.0, implicit:bool=True, 
-                        min_usr_len:int=0, min_items_cnt:int=0, max_usr_len:int=100000, max_items_cnt:int=100000, use_validation:bool=True, protocol:str='holdout', generalization:str='weak',
+                        min_usr_len:int=0, min_items_cnt:int=0, max_usr_len:int=100000, max_items_cnt:int=100000, final_usr_len:int=4, use_validation:bool=True, protocol:str='holdout', generalization:str='weak',
                         holdout_users:Union[int, float]=0.1, valid_ratio:Union[int, float]=0.1, test_ratio:Union[int, float]=0.2, 
                         leave_k:int=1, split_random:bool=True, cache_dir:str='cache', seed:int=1234):
         self.data_path = Path(data_path)
@@ -25,7 +25,7 @@ class UIRTDataset(object):
         self.min_items_cnt = min_items_cnt
         self.max_usr_len = max_usr_len
         self.max_items_cnt = max_items_cnt
-        self.fin_usr_len = 4
+        self.fin_usr_len = final_usr_len
         self.use_validation = use_validation
 
         self.protocol = protocol
@@ -154,7 +154,7 @@ class UIRTDataset(object):
             # Filter users
             num_items_by_user = raw_data.groupby('user', as_index=False).size()
             num_items_by_user = num_items_by_user.set_index('user')
-            user_filter_idx = raw_data['user'].isin(num_items_by_user.index[(num_items_by_user['size'] >= self.min_usr_len)
+            user_filter_idx = raw_data['user'].isin(num_items_by_user.index[(num_items_by_user['size'] >= self.fin_usr_len)
                                                                             & (num_items_by_user['size'] <= self.max_usr_len)])
             raw_data = raw_data[user_filter_idx]
             num_items_by_user = raw_data.groupby('user', as_index=False).size()
