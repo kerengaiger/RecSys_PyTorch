@@ -79,7 +79,7 @@ if __name__ == '__main__':
 
                 ],
                 evaluation_function=train_with_conf,
-                minimize=True,
+                minimize=False,
                 objective_name='validation loss',
                 total_trials=5
             )
