@@ -136,22 +136,22 @@ class UIRTDataset(object):
             print('# raw users: %d' % (raw_num_items))
 
             # Filter positive threshold
-            raw_data = raw_data[raw_data['rating'] >= self.binarize_threshold]
+            raw_data = raw_data[raw_data['rating'] > self.binarize_threshold]
             print(raw_data.shape[0])
 
             # Filter users
             num_items_by_user = raw_data.groupby('user', as_index=False).size()
             num_items_by_user = num_items_by_user.set_index('user')
-            user_filter_idx = raw_data['user'].isin(num_items_by_user.index[(num_items_by_user['size'] >= self.min_usr_len)
-                                                                            & (num_items_by_user['size'] <= self.max_usr_len)])
+            user_filter_idx = raw_data['user'].isin(num_items_by_user.index[(num_items_by_user['size'] > self.min_usr_len)
+                                                                            & (num_items_by_user['size'] < self.max_usr_len)])
             raw_data = raw_data[user_filter_idx]
             print(raw_data.shape[0])
 
             # Filter items
             num_users_by_item = raw_data.groupby('item', as_index=False).size()
             num_users_by_item = num_users_by_item.set_index('item')
-            item_filter_idx = raw_data['item'].isin(num_users_by_item.index[(num_users_by_item['size'] >= self.min_items_cnt)
-                                                                          &(num_users_by_item['size'] <= self.max_items_cnt)])
+            item_filter_idx = raw_data['item'].isin(num_users_by_item.index[(num_users_by_item['size'] > self.min_items_cnt)
+                                                                          &(num_users_by_item['size'] < self.max_items_cnt)])
             raw_data = raw_data[item_filter_idx]
             num_users_by_item = raw_data.groupby('item', as_index=False).size()
             num_users_by_item = num_users_by_item.set_index('item')
