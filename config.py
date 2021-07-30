@@ -24,6 +24,8 @@ class DatasetConfig:
     test_ratio:float=0.0
     leave_k:int=1
     split_random:bool=False
+    use_validation:bool=True
+
 
 @dataclass
 class EvaluatorConfig:
