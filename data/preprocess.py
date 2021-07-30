@@ -15,6 +15,7 @@ def split_into_tr_val_te(data:pd.DataFrame, generalization:str, use_validation:b
         if use_validation:
             new_data_to_split = train_data
         else:
+            print('Doesnt use validation - validation is the same as test')
             new_data_to_split = data
 
         train_data, valid_data = split_input_target_by_users(new_data_to_split, test_ratio=num_test_items,
