@@ -157,16 +157,16 @@ class UIRTDataset(object):
             num_items_by_user = raw_data.groupby('user', as_index=False).size()
             num_items_by_user = num_items_by_user.set_index('user')
             user_filter_idx = raw_data['user'].isin(num_items_by_user.index[(num_items_by_user['size'] >= self.fin_usr_len)
-                                                                            & (num_items_by_user['size'] <= self.max_usr_len)])
+                                                                            & (num_items_by_user['size'] < self.max_usr_len)])
             raw_data = raw_data[user_filter_idx]
-            num_items_by_user = raw_data.groupby('user', as_index=False).size()
-            num_items_by_user = num_items_by_user.set_index('user')
-            print(raw_data.shape[0])
-
+            print(raw_data[['user', 'item']].drop_duplicates().shape[0])
             num_items = len(pd.unique(raw_data.item))
             print('# item after filter (min %d users): %d' % (self.min_items_cnt, num_items))
             num_users = len(pd.unique(raw_data.user))
             print('# user after filter (min %d items): %d' % (self.min_usr_len, num_users))
+
+            num_items_by_user = raw_data.groupby('user', as_index=False).size()
+            num_items_by_user = num_items_by_user.set_index('user')
 
             # Build user old2new id map
             # user_frame = num_items_by_user.to_frame()
