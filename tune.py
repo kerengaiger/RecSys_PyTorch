@@ -21,6 +21,7 @@ def train_with_conf(hparams_cnfg):
     seed = exp_config.seed
 
     dataset_config = config.dataset
+    dataset_config['use_validation'] = hparams_cnfg['use_validation']
 
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
@@ -33,7 +34,6 @@ def train_with_conf(hparams_cnfg):
         Dataset
     """
     dataset = UIRTDataset(**dataset_config)
-    print(dataset.use_validation)
 
     """ 
         Early stop
@@ -58,7 +58,6 @@ def train_with_conf(hparams_cnfg):
     evaluator = Evaluator(valid_input, valid_target, protocol=dataset.protocol, ks=config.evaluator.ks)
 
     model = model_base(dataset, hparams_cnfg, device)
-    print(model)
 
     ret = model.fit(dataset, exp_config, evaluator=evaluator,early_stop=early_stop, loggers=[logger, csv_logger])
     print(ret['scores'])
