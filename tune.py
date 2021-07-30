@@ -11,6 +11,7 @@ from utils.general import make_log_dir, set_random_seed
 from config import load_config
 
 from ax.service.managed_loop import optimize
+import argparse
 
 
 def train_with_conf(hparams_cnfg):
@@ -66,20 +67,39 @@ def train_with_conf(hparams_cnfg):
     return {'HR@20': (ret['scores']['HR@20'], 0.0)}
 
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model', choices=['LightGCN', 'BPRMF'], default='LightGCN',
+                        help="model to choose")
+
+    return parser.parse_args()
+
+
 if __name__ == '__main__':
+    args = parse_args()
+    if args.model == 'LightGCN':
+        parameters = [
+                         {"name": "emb_dim", "type": "choice", "value_type": "int", "values": [20, 32, 64, 128]},
+                         {"name": "num_layers", "type": "choice", "value_type": "int", "values": [2, 4, 6, 10, 12]},
+                         {"name": "node_dropout", "type": "range", "value_type": "float", "bounds": [0.2, 0.5]},
+                         {"name": "split", "type": "fixed", "value_type": "bool", "value": False},
+                         {"name": "num_folds", "type": "fixed", "value_type": "int", "value": 100},
+                         {"name": "graph_dir", "type": "fixed", "value_type": "str", "value": 'graph'},
+                         {"name": "reg", "type": "fixed", "value_type": "float", "value": 0.0001},
+                         {"name": "use_validation", "type": "fixed", "value_type": "bool", "value": True},
+                     ],
+    elif args.model == 'BPRMF':
+        parameters = [
+            {"name": "hidden_dim", "type": "choice", "value_type": "int", "values": [20, 30, 50, 70, 100, 120]},
+            {"name": "pointwise", "type": "fixed", "value_type": "bool", "value": False},
+            {"name": "loss_func", "type": "choice", "value_type": "str", "values": ['ce', 'mse']},
+        ]
+    else:
+        print('Model not defined')
+        parameters = None
+
     best_parameters, values, _experiment, _cur_model = optimize(
-                parameters=[
-                    {"name": "emb_dim", "type": "choice", "value_type": "int", "values": [20, 32, 64, 128]},
-                    {"name": "num_layers", "type": "choice", "value_type": "int", "values": [2, 4, 6, 10, 12]},
-                    {"name": "node_dropout", "type": "range", "value_type": "float", "bounds": [0.2, 0.5]},
-                    {"name": "split", "type": "fixed", "value_type": "bool", "value": False},
-                    {"name": "num_folds", "type": "fixed", "value_type": "int", "value": 100},
-                    {"name": "graph_dir", "type": "fixed", "value_type": "str", "value": 'graph'},
-                    {"name": "reg", "type": "fixed", "value_type": "float", "value": 0.0001},
-                    {"name": "use_validation", "type": "fixed", "value_type": "bool", "value": True},
-
-
-                ],
+                parameters=parameters,
                 evaluation_function=train_with_conf,
                 minimize=False,
                 objective_name='HR@20',
