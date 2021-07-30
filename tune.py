@@ -78,7 +78,8 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
     if args.model == 'LightGCN':
-        parameters = [
+        best_parameters, values, _experiment, _cur_model = optimize(
+            parameters=[
                          {"name": "emb_dim", "type": "choice", "value_type": "int", "values": [20, 32, 64, 128]},
                          {"name": "num_layers", "type": "choice", "value_type": "int", "values": [2, 4, 6, 10, 12]},
                          {"name": "node_dropout", "type": "range", "value_type": "float", "bounds": [0.2, 0.5]},
@@ -88,23 +89,25 @@ if __name__ == '__main__':
                          {"name": "reg", "type": "fixed", "value_type": "float", "value": 0.0001},
                          {"name": "use_validation", "type": "fixed", "value_type": "bool", "value": True},
                      ],
-    elif args.model == 'BPRMF':
-        parameters = [
-            {"name": "hidden_dim", "type": "choice", "value_type": "int", "values": [20, 30, 50, 70, 100, 120]},
-            {"name": "pointwise", "type": "fixed", "value_type": "bool", "value": False},
-            {"name": "loss_func", "type": "choice", "value_type": "str", "values": ['ce', 'mse']},
-        ]
-    else:
-        print('Model not defined')
-        parameters = None
+            evaluation_function=train_with_conf,
+            minimize=False,
+            objective_name='HR@20',
+            total_trials=5
+        )
 
-    best_parameters, values, _experiment, _cur_model = optimize(
-                parameters=parameters,
-                evaluation_function=train_with_conf,
-                minimize=False,
-                objective_name='HR@20',
-                total_trials=5
-            )
+    else:
+        best_parameters, values, _experiment, _cur_model = optimize(
+            parameters=[
+                {"name": "hidden_dim", "type": "choice", "value_type": "int", "values": [20, 30, 50, 70, 100, 120]},
+                {"name": "pointwise", "type": "fixed", "value_type": "bool", "value": False},
+                {"name": "loss_func", "type": "choice", "value_type": "str", "values": ['ce', 'mse']},
+            ],
+            evaluation_function=train_with_conf,
+            minimize=False,
+            objective_name='HR@20',
+            total_trials=5
+        )
+
     print('Final Train')
     best_parameters['use_validation'] = False
     train_with_conf(best_parameters)
