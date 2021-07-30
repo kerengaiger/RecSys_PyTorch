@@ -41,7 +41,7 @@ class ExperimentConfig:
     debug:bool=False
     save_dir:str='saves'
     num_epochs:int=300
-    batch_size:int=256
+    batch_size:int=128
     verbose:int=0
     print_step:int=1
     test_step:int=1
