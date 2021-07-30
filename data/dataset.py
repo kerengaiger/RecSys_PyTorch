@@ -111,7 +111,7 @@ class UIRTDataset(object):
         user2id_file = self._prepro_cache_dir / 'user_map'
         item2id_file = self._prepro_cache_dir / 'item_map'
         files_to_check = list(prepro_dict.values()) + [user2id_file, item2id_file]
-        if self._check_preprocssed(files_to_check):
+        if self._check_preprocssed(files_to_check) and self.use_validation:
             print('Load from preprocssed')
         else:
             print('Preprocess raw data...')
