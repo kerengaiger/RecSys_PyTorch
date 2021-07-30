@@ -33,6 +33,7 @@ def train_with_conf(hparams_cnfg):
         Dataset
     """
     dataset = UIRTDataset(**dataset_config)
+    print(dataset.use_validation)
 
     """ 
         Early stop
