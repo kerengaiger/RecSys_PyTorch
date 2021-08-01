@@ -8,7 +8,7 @@ from data.data_batcher import DataBatcher
 from utils.types import sparse_to_dict
 
 class Evaluator:
-    def __init__(self, eval_input, eval_target, protocol, ks, eval_batch_size=1024):
+    def __init__(self, eval_input, eval_target, hr_out, rr_out, protocol, ks, eval_batch_size=1024):
         """
 
         """
@@ -22,7 +22,9 @@ class Evaluator:
         self.protocol = protocol
 
         self._register_eval_func()
-    
+        self.hr_out = hr_out
+        self.rr_out = rr_out
+
     def evaluate(self, model, mean=True):
         # Switch to eval mode
         model.eval()
@@ -36,7 +38,7 @@ class Evaluator:
 
         pred = self.predict_topk(output.astype(np.float32), self.max_k)
 
-        score_cumulator = self.eval_func(pred, self.eval_target, self.top_k)
+        score_cumulator = self.eval_func(pred, self.eval_target, self.top_k, self.hr_out, self.rr_out)
 
         scores = {}
         for metric in score_cumulator:
