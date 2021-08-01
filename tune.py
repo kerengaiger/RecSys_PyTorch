@@ -81,8 +81,8 @@ if __name__ == '__main__':
         best_parameters, values, _experiment, _cur_model = optimize(
             parameters=[
                          {"name": "emb_dim", "type": "choice", "value_type": "int", "values": [20, 32, 64, 128]},
-                         {"name": "num_layers", "type": "choice", "value_type": "int", "values": [2, 4, 6, 10, 12]},
-                         {"name": "node_dropout", "type": "range", "value_type": "float", "bounds": [0.2, 0.5]},
+                         {"name": "num_layers", "type": "choice", "value_type": "int", "values": [2, 3, 4]},
+                         {"name": "node_dropout", "type": "range", "value_type": "float", "bounds": [0.0, 0.1]},
                          {"name": "split", "type": "fixed", "value_type": "bool", "value": False},
                          {"name": "num_folds", "type": "fixed", "value_type": "int", "value": 100},
                          {"name": "graph_dir", "type": "fixed", "value_type": "str", "value": 'graph'},
