@@ -143,7 +143,6 @@ class UIRTDataset(object):
             user_filter_idx = raw_data['user'].isin(num_items_by_user.index[(num_items_by_user['size'] > self.min_usr_len)
                                                                             & (num_items_by_user['size'] < self.max_usr_len)])
             raw_data = raw_data[user_filter_idx]
-            print(raw_data.shape[0])
 
             # Filter items
             num_users_by_item = raw_data.groupby('item', as_index=False).size()
@@ -151,9 +150,6 @@ class UIRTDataset(object):
             item_filter_idx = raw_data['item'].isin(num_users_by_item.index[(num_users_by_item['size'] > self.min_items_cnt)
                                                                           &(num_users_by_item['size'] < self.max_items_cnt)])
             raw_data = raw_data[item_filter_idx]
-            num_users_by_item = raw_data.groupby('item', as_index=False).size()
-            num_users_by_item = num_users_by_item.set_index('item')
-            print(raw_data.shape[0])
 
             # Filter users
             num_items_by_user = raw_data.groupby('user', as_index=False).size()
@@ -162,23 +158,26 @@ class UIRTDataset(object):
                                                                             & (num_items_by_user['size'] < self.max_usr_len)])
             raw_data = raw_data[user_filter_idx]
             print(raw_data[['user', 'item']].drop_duplicates().shape[0])
+
             num_items = len(pd.unique(raw_data.item))
             print('# item after filter (min %d users): %d' % (self.min_items_cnt, num_items))
             num_users = len(pd.unique(raw_data.user))
             print('# user after filter (min %d items): %d' % (self.min_usr_len, num_users))
 
-            num_items_by_user = raw_data.groupby('user', as_index=False).size()
-            num_items_by_user = num_items_by_user.set_index('user')
-
             # Build user old2new id map
             # user_frame = num_items_by_user.to_frame()
+            num_items_by_user = raw_data.groupby('user', as_index=False).size()
+            num_items_by_user = num_items_by_user.set_index('user')
             num_items_by_user.columns = ['item_cnt']
             raw_users = list(num_items_by_user.index)
             user2id = {u: uid for uid, u in enumerate(raw_users)}
 
             # Build item old2new id map
             # item_frame = num_users_by_item.to_frame()
+            num_users_by_item = raw_data.groupby('item', as_index=False).size()
+            num_users_by_item = num_users_by_item.set_index('item')
             num_users_by_item.columns = ['user_cnt']
+            num_users_by_item.to_csv(self.dataname + '_itm_cnt.csv')
             raw_items = list(num_users_by_item.index)
             item2id = {i: iid for iid, i in enumerate(raw_items)}
             
