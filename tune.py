@@ -30,11 +30,15 @@ def train_with_conf(hparams_cnfg):
                                                                   'num_folds': 100, 'graph_dir': 'graph', 'reg': 0.0001,
                                                                   'use_validation': False}}
 
-    exp_config = config.experiment
-    gpu_id = exp_config.gpu
-    seed = exp_config.seed
+    # exp_config = config.experiment
+    exp_config = config['experiment']
+    # gpu_id = exp_config.gpu
+    gpu_id = exp_config['gpu']
+    seed = exp_config['seed']
+    # seed = exp_config.seed
 
-    dataset_config = config.dataset
+    # dataset_config = config.dataset
+    dataset_config = config['dataset']
     dataset_config['use_validation'] = hparams_cnfg['use_validation']
 
     os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
@@ -52,14 +56,18 @@ def train_with_conf(hparams_cnfg):
     """ 
         Early stop
     """
-    early_stop = EarlyStop(**config.early_stop)
+    # early_stop = EarlyStop(**config.early_stop)
+    early_stop = EarlyStop(**config['early_stop'])
+
 
     """ 
         Model base class
     """
-    model_name = config.experiment.model_name
+    # model_name = config.experiment.model_name
+    model_name = config['experiment']['model_name']
     model_base = getattr(models, model_name)
-    log_dir = make_log_dir(os.path.join(exp_config.save_dir, model_name))
+    # log_dir = make_log_dir(os.path.join(exp_config.save_dir, model_name))
+    log_dir = make_log_dir(os.path.join(exp_config['save_dir'], model_name))
     logger = FileLogger(log_dir)
     csv_logger = CSVLogger(log_dir)
     config.hparams = hparams_cnfg
@@ -69,12 +77,14 @@ def train_with_conf(hparams_cnfg):
     logger.info(dataset)
 
     valid_input, valid_target = dataset.valid_input, dataset.valid_target
-    evaluator = Evaluator(valid_input, valid_target, dataset_config.dataname + '_hr.csv',  dataset_config.dataname + '_rr.csv',
-                          protocol=dataset.protocol, ks=config.evaluator.ks)
+    # evaluator = Evaluator(valid_input, valid_target, dataset_config.dataname + '_hr.csv',  dataset_config.dataname + '_rr.csv',
+    #                       protocol=dataset.protocol, ks=config.evaluator.ks)
 
+    evaluator = Evaluator(valid_input, valid_target, dataset_config['dataname'] + '_hr.csv',  dataset_config['dataname'] + '_rr.csv',
+                          protocol=dataset.protocol, ks=config['evaluator']['ks'])
     model = model_base(dataset, hparams_cnfg, device)
 
-    ret = model.fit(dataset, exp_config, evaluator=evaluator,early_stop=early_stop, loggers=[logger, csv_logger])
+    ret = model.fit(dataset, exp_config, evaluator=evaluator, early_stop=early_stop, loggers=[logger, csv_logger])
     print(ret['scores'])
 
     csv_logger.save()
