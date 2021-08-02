@@ -5,15 +5,15 @@ from omegaconf import OmegaConf
 
 @dataclass
 class DatasetConfig:
-    data_path:str='datasets/moviesdat/moviesdat_corpus.csv'
-    dataname:str='moviesdat'
+    data_path:str='datasets/amazon/amazonbeauty_corpus.csv'
+    dataname:str='amazonbeauty'
     separator:str=','
     binarize_threshold:float=4.0
     implicit:bool=True
-    min_usr_len:int=100
+    min_usr_len:int=2
     max_usr_len:int=1000
-    min_items_cnt:int=100
-    max_items_cnt:int=100000
+    min_items_cnt:int=5
+    max_items_cnt:int=50000
     final_usr_len:int=4
 
     protocol:str='leave_one_out' # holdout, leave_one_out
