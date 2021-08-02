@@ -70,7 +70,8 @@ def train_with_conf(hparams_cnfg):
     log_dir = make_log_dir(os.path.join(exp_config['save_dir'], model_name))
     logger = FileLogger(log_dir)
     csv_logger = CSVLogger(log_dir)
-    config.hparams = hparams_cnfg
+    # config.hparams = hparams_cnfg
+    config['hparams'] = hparams_cnfg
 
     # Save log & dataset config.
     logger.info(config)
