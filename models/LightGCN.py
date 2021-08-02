@@ -194,6 +194,8 @@ class LightGCN(BaseModel):
                 side_emb = torch.cat(temp_emb, dim=0)
                 all_emb = side_emb
             else:
+                print(g_droped.size())
+                print(all_emb.size())
                 all_emb = torch.sparse.mm(g_droped, all_emb)
             embs.append(all_emb)
         embs = torch.stack(embs, dim=1)
