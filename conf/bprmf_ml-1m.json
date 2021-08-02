@@ -1,7 +1,7 @@
 {
   "data_name": "ml-1m",
   "min_usr_len": 1,
-  "max_usr_len": 60,
+  "max_usr_len": 1000,
   "min_item_cnt": 10,
   "max_item_cnt": 10000,
   "fin_min_usr_len": 3,
