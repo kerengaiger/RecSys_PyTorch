@@ -16,7 +16,7 @@ from omegaconf import OmegaConf
 
 
 def train_with_conf(hparams_cnfg):
-    config = load_config()
+    # config = load_config()
     config = OmegaConf.structured({'dataset': {'data_path': 'datasets/amazon/amazonbeauty_corpus.csv', 'dataname': 'amazonbeauty',
                           'separator': ',', 'binarize_threshold': 4.0, 'implicit': True, 'min_usr_len': 2,
                           'max_usr_len': 1000, 'min_items_cnt': 5, 'max_items_cnt': 50000, 'final_usr_len': 4,
@@ -30,6 +30,8 @@ def train_with_conf(hparams_cnfg):
                                                                   'emb_dim': 128, 'num_layers': 5, 'split': False,
                                                                   'num_folds': 100, 'graph_dir': 'graph', 'reg': 0.0001,
                                                                   'use_validation': False}})
+                                                                  
+    print(config)
 
     exp_config = config.experiment
     gpu_id = exp_config.gpu
@@ -65,7 +67,7 @@ def train_with_conf(hparams_cnfg):
     logger = FileLogger(log_dir)
     csv_logger = CSVLogger(log_dir)
     config.hparams = hparams_cnfg
-
+  
     # Save log & dataset config.
     logger.info(config)
     logger.info(dataset)
