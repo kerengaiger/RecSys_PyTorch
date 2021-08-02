@@ -119,6 +119,7 @@ if __name__ == '__main__':
                 {"name": "hidden_dim", "type": "choice", "value_type": "int", "values": [20, 30, 50, 70, 100, 120]},
                 {"name": "pointwise", "type": "fixed", "value_type": "bool", "value": False},
                 {"name": "loss_func", "type": "choice", "value_type": "str", "values": ['ce', 'mse']},
+                {"name": "use_validation", "type": "fixed", "value_type": "bool", "value": True},
             ],
             evaluation_function=train_with_conf,
             minimize=False,

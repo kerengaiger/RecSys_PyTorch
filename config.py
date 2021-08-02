@@ -5,15 +5,15 @@ from omegaconf import OmegaConf
 
 @dataclass
 class DatasetConfig:
-    data_path:str='datasets/amazon/amazonbeauty_corpus.csv'
-    dataname:str='amazonbeauty'
-    separator:str=','
+    data_path:str='datasets/ml-1m/ratings.dat'
+    dataname:str='ml-1m'
+    separator:str='::'
     binarize_threshold:float=4.0
     implicit:bool=True
-    min_usr_len:int=2
+    min_usr_len:int=1
     max_usr_len:int=1000
-    min_items_cnt:int=5
-    max_items_cnt:int=50000
+    min_items_cnt:int=10
+    max_items_cnt:int=10000
     final_usr_len:int=4
 
     protocol:str='leave_one_out' # holdout, leave_one_out
@@ -46,7 +46,7 @@ class ExperimentConfig:
     print_step:int=1
     test_step:int=1
     test_from:int=1
-    model_name:str='LightGCN'
+    model_name:str='MF'
     num_exp:int=5
     seed:int=2020
     gpu:int=1
