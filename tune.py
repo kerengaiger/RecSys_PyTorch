@@ -73,8 +73,9 @@ def train_with_conf(hparams_cnfg):
     logger.info(dataset)
 
     valid_input, valid_target = dataset.valid_input, dataset.valid_target
-    evaluator = Evaluator(valid_input, valid_target, dataset_config.dataname + '_hr.csv',  dataset_config.dataname + '_rr.csv',
-                          protocol=dataset.protocol, ks=config.evaluator.ks)
+    evaluator = Evaluator(valid_input, valid_target, dataset_config.dataname + '_preds.csv',
+                          protocol=dataset.protocol, ks=config.evaluator.ks, usermap_file=dataset._user2id_file,
+                          itemmap_file=dataset._item2id_file)
 
     model = model_base(dataset, hparams_cnfg, device)
 
