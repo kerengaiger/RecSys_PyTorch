@@ -40,7 +40,8 @@ class Evaluator:
 
         pred = self.predict_topk(output.astype(np.float32), self.max_k)
 
-        score_cumulator = self.eval_func(pred, self.eval_target, self.top_k, self.preds_out)
+        score_cumulator = self.eval_func(pred, self.eval_target, self.top_k, self.preds_out, self.usermap_file,
+                                         self.itemmap_file)
 
         scores = {}
         for metric in score_cumulator:
