@@ -46,7 +46,7 @@ class ExperimentConfig:
     print_step:int=1
     test_step:int=1
     test_from:int=1
-    model_name:str='MF'
+    model_name:str='LightGCN'
     num_exp:int=5
     seed:int=2020
     gpu:int=1
