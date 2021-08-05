@@ -64,6 +64,7 @@ class UIRTDataset(object):
         dtype={'user': int, 'item': int, 'rating': float, 'timestamp': float}
         
         if self.generalization == 'weak':
+            print('weak!')
             train_df = transform(pd.read_csv(self._prepro_file_dict['train'], sep=',', names=names, dtype=dtype))
             valid_df = transform(pd.read_csv(self._prepro_file_dict['valid'], sep=',', names=names, dtype=dtype))
             test_df = transform(pd.read_csv(self._prepro_file_dict['test'], sep=',', names=names, dtype=dtype))
