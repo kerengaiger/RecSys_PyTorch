@@ -59,6 +59,9 @@ class UIRTDataset(object):
         self.user2id = self._load_id_map(self._user2id_file)
         self.item2id = self._load_id_map(self._item2id_file)
         self.num_users, self.num_items = len(self.user2id), len(self.item2id)
+        ##########
+        print(self.valid_input)
+        ################
 
         names=['user', 'item', 'rating', 'timestamp']
         dtype={'user': int, 'item': int, 'rating': float, 'timestamp': float}
