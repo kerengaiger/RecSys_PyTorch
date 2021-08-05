@@ -22,7 +22,10 @@ def compute_loo_metrics_py(pred, target, ks, preds_out, usermap_file, itemmap_fi
         writer = csv.writer(preds_file, delimiter=',', lineterminator='\n', )
         for idx, u in enumerate(target):
             pred_u = pred[idx]
+            print(u)
+            print(target[u])
             target_u = target[u][0]
+            print(target_u)
 
             hit_at_k = np.where(pred_u == target_u)[0][0] + 1 if target_u in pred_u else max_k + 1
             writer.writerow([usermap.loc[usermap['usr_new'] == u, 'usr_old'][0],
