@@ -23,13 +23,12 @@ def compute_loo_metrics_py(pred, target, ks, preds_out, usermap_file, itemmap_fi
         for idx, u in enumerate(target):
             pred_u = pred[idx]
             print(u)
-            print(target[u])
             target_u = target[u][0]
             print(target_u)
 
             hit_at_k = np.where(pred_u == target_u)[0][0] + 1 if target_u in pred_u else max_k + 1
-            writer.writerow([usermap.loc[usermap['usr_new'] == u, 'usr_old'][0],
-                             itemmap.loc[itemmap['itm_new'] == target_u, 'itm_old'][0],
+            writer.writerow([usermap.loc[usermap['usr_new'] == u, 'usr_old'].values[0],
+                             itemmap.loc[itemmap['itm_new'] == target_u, 'itm_old'].values[0],
                              hit_at_k])
             for k in ks:
                 hr_k = 1 if hit_at_k <= k else 0
