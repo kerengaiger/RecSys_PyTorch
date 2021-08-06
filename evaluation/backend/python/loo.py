@@ -28,7 +28,7 @@ def compute_loo_metrics_py(pred, target, ks, preds_out, usermap_file, itemmap_fi
             hit_at_k = np.where(pred_u == target_u)[0][0] + 1 if target_u in pred_u else max_k + 1
             if usermap.loc[usermap['usr_new'] == u].empty:
                 print('not located u:', u)
-            if usermap.loc[usermap['itm_new'] == target_u].empty:
+            if usermap.loc[itemmap['itm_new'] == target_u].empty:
                 print('not located item:', target_u)
             writer.writerow([usermap.loc[usermap['usr_new'] == u, 'usr_old'].values[0],
                              itemmap.loc[itemmap['itm_new'] == target_u, 'itm_old'].values[0],
