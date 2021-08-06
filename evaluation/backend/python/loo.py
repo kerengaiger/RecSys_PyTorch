@@ -40,6 +40,7 @@ def compute_loo_metrics_py(pred, target, ks, preds_out, usermap_file, itemmap_fi
             score_cumulator['NDCG'][k].update(ndcg_k)
             score_cumulator['MRR'][k].update(rr_k)
     print('num users at test:', len(users))
+    print('num users after translation:', len([usermap.loc[usermap['usr_new'] == u, 'usr_old'].values[0] for u in users]))
     if is_final_train:
         pd.DataFrame({'user': [usermap.loc[usermap['usr_new'] == u, 'usr_old'].values[0] for u in users],
                       'item': [itemmap.loc[itemmap['itm_new'] == i, 'itm_old'].values[0] for i in items],
