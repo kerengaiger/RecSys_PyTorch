@@ -120,7 +120,7 @@ class LightGCN(BaseModel):
 
         pos_scores = self.forward(users, pos_items)
         neg_scores = self.forward(users, neg_items)
-        loss = -F.sigmoid(pos_scores - neg_scores).log().mean()
+        loss = -torch.sigmoid(pos_scores - neg_scores).log().mean()
         return loss
 
     def predict_batch_users(self, user_ids):
