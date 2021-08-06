@@ -17,6 +17,7 @@ def compute_loo_metrics_py(pred, target, ks, preds_out, usermap_file, itemmap_fi
     usermap = pd.read_csv(usermap_file, names=['usr_old', 'usr_new'])
     itemmap = pd.read_csv(itemmap_file, names=['itm_old', 'itm_new'])
 
+    print(len(target))
     max_k = max(ks)
     with open(preds_out, 'w') as preds_file:
         writer = csv.writer(preds_file, delimiter=',', lineterminator='\n', )
