@@ -9,7 +9,7 @@ from utils.types import sparse_to_dict
 
 class Evaluator:
     def __init__(self, eval_input, eval_target, preds_out, protocol, ks, usermap_file,
-                 itemmap_file, eval_batch_size=1024):
+                 itemmap_file, is_final_train=False, eval_batch_size=1024):
         """
 
         """
@@ -26,6 +26,7 @@ class Evaluator:
         self.preds_out = preds_out
         self.usermap_file = usermap_file
         self.itemmap_file = itemmap_file
+        self.is_final_train = is_final_train
 
     def evaluate(self, model, mean=True):
         # Switch to eval mode
@@ -41,7 +42,7 @@ class Evaluator:
         pred = self.predict_topk(output.astype(np.float32), self.max_k)
 
         score_cumulator = self.eval_func(pred, self.eval_target, self.top_k, self.preds_out, self.usermap_file,
-                                         self.itemmap_file)
+                                         self.itemmap_file, self.is_final_train)
 
         scores = {}
         for metric in score_cumulator:

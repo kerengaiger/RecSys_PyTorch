@@ -9,7 +9,7 @@ from .. import LOO_METRICS
 # from evaluation.backend import LOO_METRICS
 
 
-def compute_loo_metrics_py(pred, target, ks, preds_out, usermap_file, itemmap_file):
+def compute_loo_metrics_py(pred, target, ks, preds_out, usermap_file, itemmap_file, is_final_train):
     score_cumulator = OrderedDict()
     for metric in LOO_METRICS:
         score_cumulator[metric] = {k: Statistics('%s@%d' % (metric, k)) for k in ks}
@@ -18,26 +18,30 @@ def compute_loo_metrics_py(pred, target, ks, preds_out, usermap_file, itemmap_fi
     itemmap = pd.read_csv(itemmap_file, names=['itm_old', 'itm_new'])
 
     max_k = max(ks)
-    with open(preds_out, 'w') as preds_file:
-        writer = csv.writer(preds_file, delimiter=',', lineterminator='\n', )
-        for idx, u in enumerate(target):
-            pred_u = pred[idx]
-            target_u = target[u][0]
+    hits_at_k = []
+    users = []
+    items = []
+    for idx, u in enumerate(target):
 
-            hit_at_k = np.where(pred_u == target_u)[0][0] + 1 if target_u in pred_u else max_k + 1
-            if usermap.loc[usermap['usr_new'] == u].empty:
-                print('not located u:', u)
-            if itemmap.loc[itemmap['itm_new'] == target_u].empty:
-                print('not located item:', target_u)
-            writer.writerow([usermap.loc[usermap['usr_new'] == u, 'usr_old'].values[0],
-                             itemmap.loc[itemmap['itm_new'] == target_u, 'itm_old'].values[0],
-                             hit_at_k])
-            for k in ks:
-                hr_k = 1 if hit_at_k <= k else 0
-                ndcg_k = 1 / math.log(hit_at_k + 1, 2) if hit_at_k <= k else 0
-                rr_k = (1 / hit_at_k) if hit_at_k <= k else 0
+        pred_u = pred[idx]
+        target_u = target[u][0]
 
-                score_cumulator['HR'][k].update(hr_k)
-                score_cumulator['NDCG'][k].update(ndcg_k)
-                score_cumulator['MRR'][k].update(rr_k)
+        hit_at_k = np.where(pred_u == target_u)[0][0] + 1 if target_u in pred_u else max_k + 1
+        hits_at_k.append(hit_at_k)
+        users.append(u)
+        items.append(target_u)
+
+        for k in ks:
+            hr_k = 1 if hit_at_k <= k else 0
+            ndcg_k = 1 / math.log(hit_at_k + 1, 2) if hit_at_k <= k else 0
+            rr_k = (1 / hit_at_k) if hit_at_k <= k else 0
+
+            score_cumulator['HR'][k].update(hr_k)
+            score_cumulator['NDCG'][k].update(ndcg_k)
+            score_cumulator['MRR'][k].update(rr_k)
+    print('num users at test:', len(users))
+    if is_final_train:
+        pd.DataFrame({'user': [usermap.loc[usermap['usr_new'] == u, 'usr_old'].values[0] for u in users],
+                      'item': [itemmap.loc[itemmap['itm_new'] == i, 'itm_old'].values[0] for i in items],
+                      'hit': hits_at_k}).to_csv(preds_out, index=False)
     return score_cumulator
