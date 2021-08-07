@@ -120,7 +120,8 @@ if __name__ == '__main__':
     else:
         best_parameters, values, _experiment, _cur_model = optimize(
             parameters=[
-                {"name": "hidden_dim", "type": "choice", "value_type": "int", "values": [20, 30, 50, 70, 100, 120]},
+                {"name": "hidden_dim", "type": "choice", "value_type": "int", "values": [12, 17, 20, 25, 30, 50, 100]},
+                {"name": "learning_rate", "type": "range", "value_type": "float", "bounds": [5e-3, 1e-1]},
                 {"name": "pointwise", "type": "fixed", "value_type": "bool", "value": False},
                 {"name": "loss_func", "type": "choice", "value_type": "str", "values": ['ce', 'mse']},
                 {"name": "use_validation", "type": "fixed", "value_type": "bool", "value": True},

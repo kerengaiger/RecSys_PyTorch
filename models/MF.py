@@ -18,6 +18,7 @@ class MF(BaseModel):
 
         self.hidden_dim = hparams['hidden_dim']
         self.pointwise = hparams['pointwise']
+        self.lr = hparams['lr']
         self.loss_func = F.mse_loss if hparams['loss_func'] == 'mse' else F.binary_cross_entropy_with_logits
 
         self.user_embedding = nn.Embedding(self.num_users, self.hidden_dim)
@@ -27,7 +28,7 @@ class MF(BaseModel):
 
         self.to(device)
 
-        self.optimizer = torch.optim.Adam(self.parameters(), lr=0.001)
+        self.optimizer = torch.optim.Adagrad(self.parameters(), lr=self.lr)
 
     def embeddings(self, user_ids, item_ids):
         user_emb = self.user_embedding(user_ids)
