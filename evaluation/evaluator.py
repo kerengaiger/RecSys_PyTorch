@@ -41,8 +41,8 @@ class Evaluator:
 
         pred = self.predict_topk(output.astype(np.float32), self.max_k)
 
-        score_cumulator = self.eval_func(pred, self.eval_target, self.top_k, self.preds_out, self.usermap_file,
-                                         self.itemmap_file, self.is_final_train)
+        score_cumulator, preds_df = self.eval_func(pred, self.eval_target, self.top_k, self.usermap_file,
+                                                   self.itemmap_file)
 
         scores = {}
         for metric in score_cumulator:
@@ -54,7 +54,7 @@ class Evaluator:
                     scores['%s@%d' % (metric, k)] = score_by_ks[k].history
 
         # return
-        return scores
+        return scores, preds_df
     
     def _register_eval_func(self):
         self.eval_func = eval_func_router[self.protocol]

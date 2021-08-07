@@ -9,7 +9,7 @@ from .. import LOO_METRICS
 # from evaluation.backend import LOO_METRICS
 
 
-def compute_loo_metrics_py(pred, target, ks, preds_out, usermap_file, itemmap_file, is_final_train):
+def compute_loo_metrics_py(pred, target, ks, usermap_file, itemmap_file):
     score_cumulator = OrderedDict()
     for metric in LOO_METRICS:
         score_cumulator[metric] = {k: Statistics('%s@%d' % (metric, k)) for k in ks}
