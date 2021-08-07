@@ -11,7 +11,7 @@ class EarlyStop:
         self.best_epoch = None
         self.best_score = None
 
-    def step(self, score, epoch):
+    def step(self, score, preds_df, preds_out, epoch):
         # Always continue (shoudl_stop=False) if early_stop is not used
 
         if self.early_stop_measure == 'all':
@@ -34,11 +34,13 @@ class EarlyStop:
             if self.best_score is None:
                 self.best_score = score
                 self.best_epoch = epoch
+                preds_df.to_csv(preds_out, index=False)
                 not_updated = False
             else:
                 if score[self.early_stop_measure] > self.best_score[self.early_stop_measure]:
                     self.best_epoch = epoch
                     self.best_score = score
+                    preds_df.to_csv(preds_out, index=False)
                     not_updated = False
                 else:
                     not_updated = True

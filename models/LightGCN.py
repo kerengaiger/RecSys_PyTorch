@@ -94,7 +94,7 @@ class LightGCN(BaseModel):
             
             # Evaluate if necessary
             if evaluator is not None and epoch >= exp_config.test_from and epoch % exp_config.test_step == 0:
-                scores = evaluator.evaluate(self)
+                scores, preds_df = evaluator.evaluate(self)
                 scores['train_loss'] = epoch_loss
                 epoch_summary.update(scores)
                 
@@ -104,7 +104,7 @@ class LightGCN(BaseModel):
 
                 ## Check early stop
                 if early_stop is not None:
-                    is_update, should_stop = early_stop.step(scores, epoch)
+                    is_update, should_stop = early_stop.step(scores, preds_df, evaluator.preds_out, epoch)
                     if should_stop:
                         break
             else:
