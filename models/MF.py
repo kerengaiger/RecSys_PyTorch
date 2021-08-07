@@ -103,7 +103,7 @@ class MF(BaseModel):
             loss = self.loss_func(pos_ratings, ratings)
         else:
             neg_ratings = self.forward(users, ratings)
-            loss = -F.sigmoid(pos_ratings - neg_ratings).log().mean()
+            loss = -torch.sigmoid(pos_ratings - neg_ratings).log().mean()
         
         return loss
     
