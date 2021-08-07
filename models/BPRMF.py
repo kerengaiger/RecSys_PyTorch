@@ -81,7 +81,10 @@ class BPRMF(BaseModel):
                     batch_idx = perm[b * test_batch_size: (b + 1) * test_batch_size]
                 
                 batch_users = torch.LongTensor(eval_users[batch_idx]).to(self.device)
-                pred_matrix[batch_users] = self.predict_batch_users(batch_users).detach().cpu().clone().numpy()
+                preds = self.predict_batch_users(batch_users)
+                print(preds.device)
+                print(type(preds.detach().cpu()))
+                pred_matrix[batch_users] = preds.detach().cpu().clone().numpy()
 
         pred_matrix[eval_pos.nonzero()] = float('-inf')
 
