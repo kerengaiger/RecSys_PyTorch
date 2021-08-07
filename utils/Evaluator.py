@@ -3,6 +3,8 @@ import time
 import torch
 import pathlib
 import numpy as np
+import os
+import pickle
 from collections import OrderedDict
 
 from utils.Tools import RunningAverage as AVG
@@ -18,7 +20,7 @@ class Evaluator:
         self.num_users, self.num_items = self.eval_pos.shape
         self.item_self_information = self.compute_item_self_info(item_popularity)
 
-    def hit_ratio_k(self, model, test_batch_size, data_name, save_dir):
+    def hit_ratio_k(self, model, test_batch_size, data_name, data_dir, save_dir):
         model.eval()
 
         model.before_evaluate()
@@ -29,17 +31,23 @@ class Evaluator:
 
         topk = predict_topk(pred_matrix.astype(np.float32), max(self.top_k))
 
+        data_path = os.path.join(data_dir, data_name, data_name + '.data')
+        data = pickle.load(open(data_path, 'rb'))
+        item2id = data['item_id_dict']
+        id2item = {v: k for k, v in item2id.items()}
+        user2id = data['user_id_dict']
+        id2user = {v: k for k, v in user2id.items()}
         res = {}
         for k in self.top_k:
             with open(pathlib.Path(save_dir, f'hr_{data_name}_{k}.csv'), 'w') as hr_file:
                 hits = 0
                 for usr_id in self.eval_target.keys():
                     if self.eval_target[usr_id] in topk[usr_id, :k]:
-                        hr_file.write(f'{str(usr_id)}, {str(self.eval_target[usr_id][0])}, 1')
+                        hr_file.write(f'{str(id2user[usr_id])}, {str(id2item[self.eval_target[usr_id][0]])}, 1')
                         hr_file.write('\n')
                         hits += 1
                     else:
-                        hr_file.write(f'{str(usr_id)}, {str(self.eval_target[usr_id][0])}, 0')
+                        hr_file.write(f'{str(id2user[usr_id])}, {str(id2item[self.eval_target[usr_id][0]])}, 0')
                         hr_file.write('\n')
                 res[k] = hits / len(self.eval_target.keys())
         return res
