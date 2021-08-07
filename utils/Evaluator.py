@@ -35,11 +35,11 @@ class Evaluator:
                 hits = 0
                 for usr_id in self.eval_target.keys():
                     if self.eval_target[usr_id] in topk[usr_id, :k]:
-                        hr_file.write(f'{str(usr_id)}, {str(self.eval_target[usr_id])}, 1')
+                        hr_file.write(f'{str(usr_id)}, {str(self.eval_target[usr_id][0])}, 1')
                         hr_file.write('\n')
                         hits += 1
                     else:
-                        hr_file.write(f'{str(usr_id)}, {str(self.eval_target[usr_id])}, 0')
+                        hr_file.write(f'{str(usr_id)}, {str(self.eval_target[usr_id][0])}, 0')
                         hr_file.write('\n')
                 res[k] = hits / len(self.eval_target.keys())
         return res
