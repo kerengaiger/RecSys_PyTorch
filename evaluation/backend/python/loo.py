@@ -39,8 +39,8 @@ def compute_loo_metrics_py(pred, target, ks, preds_out, usermap_file, itemmap_fi
             score_cumulator['HR'][k].update(hr_k)
             score_cumulator['NDCG'][k].update(ndcg_k)
             score_cumulator['MRR'][k].update(rr_k)
-    if is_final_train:
-        pd.DataFrame({'user': [usermap.loc[usermap['usr_new'] == u, 'usr_old'].values[0] for u in users],
-                      'item': [itemmap.loc[itemmap['itm_new'] == i, 'itm_old'].values[0] for i in items],
-                      'hit': hits_at_k}).to_csv(preds_out, index=False)
-    return score_cumulator
+    preds_df = pd.DataFrame({'user': [usermap.loc[usermap['usr_new'] == u, 'usr_old'].values[0] for u in users],
+                            'item': [itemmap.loc[itemmap['itm_new'] == i, 'itm_old'].values[0] for i in items],
+                            'pred_loc': hits_at_k})
+
+    return score_cumulator, preds_df
