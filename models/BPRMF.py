@@ -52,7 +52,7 @@ class BPRMF(BaseModel):
             pos_ratings = self.forward(batch_users, batch_items)
             neg_ratings = self.forward(batch_users, batch_negs)
 
-            log_sigmoid_diff = F.sigmoid(pos_ratings - neg_ratings).log()
+            log_sigmoid_diff = torch.sigmoid(pos_ratings - neg_ratings).log()
             batch_loss = -torch.sum(log_sigmoid_diff)
             batch_loss.backward()
             optimizer.step()
