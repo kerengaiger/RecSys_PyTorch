@@ -24,7 +24,7 @@ def train_with_conf(conf):
     torch.random.manual_seed(conf['seed'])
 
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-    device = torch.device('cpu')
+    # device = torch.device('cpu')
 
     dataset = Dataset(
         data_dir=conf['data_dir'],
