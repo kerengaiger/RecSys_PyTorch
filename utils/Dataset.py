@@ -27,7 +27,7 @@ class Dataset:
         elif data_name == 'yahoo':
             sep = ','
             self.num_users, self.num_items = 30000, 19989
-            filename = 'netflix_corpus.csv'
+            filename = 'yahoo_all_corpus.csv'
 
         else:
             raise NotImplementedError('Choose correct dataset: {ml-100k, ml-1m, netflix, yahoo}')
