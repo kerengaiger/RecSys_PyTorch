@@ -16,6 +16,7 @@ from omegaconf import OmegaConf
 
 
 def train_with_conf(hparams_cnfg):
+    is_final_train = not hparams_cnfg['use_validation']
     config = load_config()
     # config = OmegaConf.structured({'dataset': {'data_path': 'datasets/amazon/amazonbeauty_corpus.csv', 'dataname': 'amazonbeauty',
     #                       'separator': ',', 'binarize_threshold': 4.0, 'implicit': True, 'min_usr_len': 2,
@@ -75,7 +76,7 @@ def train_with_conf(hparams_cnfg):
     valid_input, valid_target = dataset.valid_input, dataset.valid_target
     evaluator = Evaluator(valid_input, valid_target, dataset_config.dataname + '_preds.csv',
                           protocol=dataset.protocol, ks=config.evaluator.ks, usermap_file=dataset._user2id_file,
-                          is_final_train=not hparams_cnfg['use_validation'], itemmap_file=dataset._item2id_file)
+                          is_final_train=is_final_train, itemmap_file=dataset._item2id_file)
 
     model = model_base(dataset, hparams_cnfg, device)
 
@@ -83,6 +84,8 @@ def train_with_conf(hparams_cnfg):
     print(ret['scores'])
 
     csv_logger.save()
+    if is_final_train:
+        torch.save(model, os.path.join(exp_config.save_dir, f'{dataset_config.dataname}_{model_name}.pt'))
     return {'HR@20': (ret['scores']['HR@20'], 0.0)}
 
 
