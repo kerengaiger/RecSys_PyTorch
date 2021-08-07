@@ -41,12 +41,12 @@ class ExperimentConfig:
     debug:bool=False
     save_dir:str='saves'
     num_epochs:int=300
-    batch_size:int=64
+    batch_size:int=32
     verbose:int=0
     print_step:int=1
     test_step:int=1
     test_from:int=1
-    model_name:str='LightGCN'
+    model_name:str='MF'
     num_exp:int=5
     seed:int=2020
     gpu:int=1
