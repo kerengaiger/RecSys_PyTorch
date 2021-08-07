@@ -56,6 +56,7 @@ def train_with_conf(hparams_cnfg):
     """ 
         Early stop
     """
+    config.early_stop['is_final_train'] = is_final_train
     early_stop = EarlyStop(**config.early_stop)
 
 
