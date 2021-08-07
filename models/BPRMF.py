@@ -46,6 +46,9 @@ class BPRMF(BaseModel):
             batch_users = user_ids[batch_idx]
             batch_items = item_ids[batch_idx]
             batch_negs = neg_ids[batch_idx]
+            batch_users = batch_users.to(self.device)
+            batch_items = batch_items.to(self.device)
+            batch_negs = batch_negs.to(self.device)
             with torch.autograd.detect_anomaly():
                 pos_ratings = self.forward(batch_users, batch_items)
                 neg_ratings = self.forward(batch_users, batch_negs)
