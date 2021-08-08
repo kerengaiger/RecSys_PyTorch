@@ -32,7 +32,18 @@ class Dataset:
             sep = ','
             self.num_users, self.num_items = 270896, 45115
             filename = 'moviesdat_corpus.csv'
-
+        elif data_name == 'amazonbeauty':
+            sep = ','
+            self.num_users, self.num_items = 1210271, 249274
+            filename = 'amazonbeauty_corpus.csv'
+        elif data_name == 'amazonbooks':
+            sep = ','
+            self.num_users, self.num_items = 8026324, 2330066
+            filename = 'ratings_Books.csv'
+        elif data_name == 'goodbooks':
+            sep = ','
+            self.num_users, self.num_items = 53424, 10000
+            filename = 'goodbooks_corpus.csv'
         else:
             raise NotImplementedError('Choose correct dataset: {ml-100k, ml-1m, netflix, yahoo}')
 
