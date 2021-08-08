@@ -70,6 +70,7 @@ def train_with_conf(conf):
     print(f'mrr_{evaluator.max_k}:{mrr_k}')
     if not conf['early_stop']:
         torch.save(model, pathlib.Path(conf['save_dir'], model_conf.data_name + '_bpr.pt'))
+        pickle.dump(model_conf, open(pathlib.Path(conf['save_dir'], model_conf.data_name + '_cnfg.pkl'), 'w'))
     return {'validation loss': (best_score, 0.0), 'best_epoch': (best_epoch, 0.0)}
 
 
