@@ -83,6 +83,7 @@ class Evaluator:
                         rr_file.write('\n')
                         cum_rr += cur_rank
                     else:
+                        loc = max(self.top_k) + 1
                         rr_file.write(f'{str(id2user[usr_id])}, {str(id2item[self.eval_target[usr_id][0]])}, 0, {loc}')
                         rr_file.write('\n')
                 res[k] = cum_rr / len(self.eval_target.keys())
