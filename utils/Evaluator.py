@@ -52,7 +52,7 @@ class Evaluator:
                 res[k] = hits / len(self.eval_target.keys())
         return res
 
-    def mrr_k(self, model, test_batch_size, data_name, save_dir):
+    def mrr_k(self, model, test_batch_size, data_name, data_dir, save_dir):
         model.eval()
 
         model.before_evaluate()
@@ -63,18 +63,27 @@ class Evaluator:
 
         topk = predict_topk(pred_matrix.astype(np.float32), max(self.top_k))
 
+        data_path = os.path.join(data_dir, data_name, data_name + '.data')
+        data = pickle.load(open(data_path, 'rb'))
+        item2id = data['item_id_dict']
+        id2item = {v: k for k, v in item2id.items()}
+        user2id = data['user_id_dict']
+        id2user = {v: k for k, v in user2id.items()}
+
         res = {}
         for k in self.top_k:
             with open(pathlib.Path(save_dir, f'rr_{data_name}_{k}.csv'), 'w') as rr_file:
                 cum_rr = 0
                 for usr_id in self.eval_target.keys():
                     if self.eval_target[usr_id] in topk[usr_id, :k]:
-                        cur_rank = 1 / (np.where(topk[usr_id, :] == self.eval_target[usr_id])[0][0] + 1)
-                        rr_file.write(f'{str(usr_id)}, {str(self.eval_target[usr_id])}, {cur_rank}')
+                        loc = np.where(topk[usr_id, :] == self.eval_target[usr_id])[0][0] + 1
+                        cur_rank = 1 / loc
+                        rr_file.write(f'{str(id2user[usr_id])}, {str(id2item[self.eval_target[usr_id][0]])}, '
+                                      f'{cur_rank}, {loc}')
                         rr_file.write('\n')
                         cum_rr += cur_rank
                     else:
-                        rr_file.write(f'{str(usr_id)}, {str(self.eval_target[usr_id])}, 0')
+                        rr_file.write(f'{str(id2user[usr_id])}, {str(id2item[self.eval_target[usr_id][0]])}, 0, {loc}')
                         rr_file.write('\n')
                 res[k] = cum_rr / len(self.eval_target.keys())
         return res
