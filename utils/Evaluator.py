@@ -61,7 +61,7 @@ class Evaluator:
 
         pred_matrix = model.predict(eval_users, self.eval_pos, test_batch_size)
 
-        topk = predict_topk(pred_matrix.astype(np.float32), pred_matrix.shape[1])
+        topk = predict_topk(pred_matrix.astype(np.float32), pred_matrix.shape[1] - 1)
 
         data_path = os.path.join(data_dir, data_name, data_name + '.data')
         data = pickle.load(open(data_path, 'rb'))
