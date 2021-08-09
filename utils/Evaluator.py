@@ -75,8 +75,8 @@ class Evaluator:
             with open(pathlib.Path(save_dir, f'rr_{data_name}_{k}.csv'), 'w') as rr_file:
                 cum_rr = 0
                 for usr_id in self.eval_target.keys():
+                    loc = np.where(topk[usr_id, :] == self.eval_target[usr_id])[0][0] + 1
                     if self.eval_target[usr_id] in topk[usr_id, :k]:
-                        loc = np.where(topk[usr_id, :] == self.eval_target[usr_id])[0][0] + 1
                         cur_rank = 1 / loc
                         rr_file.write(f'{str(id2user[usr_id])}, {str(id2item[self.eval_target[usr_id][0]])}, '
                                       f'{cur_rank}, {loc}')
