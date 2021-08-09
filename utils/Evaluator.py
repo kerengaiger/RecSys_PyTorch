@@ -61,7 +61,7 @@ class Evaluator:
 
         pred_matrix = model.predict(eval_users, self.eval_pos, test_batch_size)
 
-        topk = predict_topk(pred_matrix.astype(np.float32), max(self.top_k))
+        topk = predict_topk(pred_matrix.astype(np.float32), pred_matrix.shape[1])
 
         data_path = os.path.join(data_dir, data_name, data_name + '.data')
         data = pickle.load(open(data_path, 'rb'))
@@ -83,7 +83,6 @@ class Evaluator:
                         rr_file.write('\n')
                         cum_rr += cur_rank
                     else:
-                        loc = max(self.top_k) + 1
                         rr_file.write(f'{str(id2user[usr_id])}, {str(id2item[self.eval_target[usr_id][0]])}, 0, {loc}')
                         rr_file.write('\n')
                 res[k] = cum_rr / len(self.eval_target.keys())
