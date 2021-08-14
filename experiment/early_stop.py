@@ -1,12 +1,12 @@
 class EarlyStop:
-    def __init__(self, early_stop, early_stop_measure):
+    def __init__(self, early_stop, early_stop_measure, is_final_train):
         self.endure = 0
         self.early_stop = early_stop
         self.early_stop_measure = early_stop_measure
 
         self.best_epoch = None
         self.best_score = None
-        self.is_final_train = False
+        self.is_final_train = is_final_train
 
     def initialize(self):
         self.best_epoch = None
