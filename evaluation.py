@@ -21,7 +21,7 @@ device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cp
 model_conf = Params(os.path.join(conf.conf_dir, f'{conf.model.lower()}_{conf.data_name}.json'))
 
 dataset = Dataset(
-    data_dir=conf['data_dir'],
+    data_dir=conf.data_dir,
     data_name=model_conf.data_name,
     train_ratio=0.8,
     device=device,
