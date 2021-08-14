@@ -37,5 +37,6 @@ eval_pos, eval_target = dataset.eval_data()
 item_popularity = dataset.item_popularity
 evaluator = Evaluator(eval_pos, eval_target, item_popularity, model_conf.top_k)
 model = torch.load(pathlib.Path(conf.save_dir, model_conf.data_name + '_bpr.pt'))
-hr_k = evaluator.hit_ratio_k(model, model_conf.test_batch_size, model_conf.data_name, conf.data_dir,
-                             conf.save_dir)
+mrr_k = evaluator.mrr_k(model, model_conf.test_batch_size, model_conf.data_name, conf['data_dir'],
+                            conf['save_dir'])
+
