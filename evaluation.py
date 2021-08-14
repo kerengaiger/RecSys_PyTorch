@@ -31,7 +31,7 @@ dataset = Dataset(
     max_item_cnt=model_conf.max_item_cnt,
     fin_min_usr_len=model_conf.fin_min_usr_len,
     pos_thresh=model_conf.pos_thresh,
-    use_validation=model_conf.use_validation
+    use_validation=False
 )
 eval_pos, eval_target = dataset.eval_data()
 item_popularity = dataset.item_popularity
