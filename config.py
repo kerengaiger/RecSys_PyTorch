@@ -63,7 +63,6 @@ def load_config():
     model_config = OmegaConf.structured(OmegaConf.load(f"conf/{model_name}.yaml"))
     
     config = OmegaConf.merge(dataset_config, evaluator_config, early_stop_config, experiment_config, model_config)
-    print(early_stop_config)
     return config
 
 if __name__ == '__main__':
