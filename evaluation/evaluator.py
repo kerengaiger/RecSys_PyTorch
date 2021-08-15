@@ -37,7 +37,7 @@ class Evaluator:
         num_users = len(eval_users)
         num_items = self.eval_input.shape
 
-        output = model.predict(eval_users, self.eval_input, self.batch_size)
+        output = model.predict(eval_users, self.eval_input, self.batch_size - 1)
 
         pred = self.predict_topk(output.astype(np.float32), output.shape[1])
 
