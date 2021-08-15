@@ -39,7 +39,7 @@ class Evaluator:
 
         output = model.predict(eval_users, self.eval_input, self.batch_size)
 
-        pred = self.predict_topk(output.astype(np.float32), self.max_k)
+        pred = self.predict_topk(output.astype(np.float32), num_items)
 
         score_cumulator, preds_df = self.eval_func(pred, self.eval_target, self.top_k, self.usermap_file,
                                                    self.itemmap_file)
