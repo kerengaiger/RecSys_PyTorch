@@ -5,7 +5,7 @@ from omegaconf import OmegaConf
 
 @dataclass
 class DatasetConfig:
-    data_path:str='datasets/moviesdal/moviesdat_corpus.csv'
+    data_path:str='datasets/moviesdat/moviesdat_corpus.csv'
     dataname:str='moviesdat'
     separator:str=','
     binarize_threshold:float=4.0
