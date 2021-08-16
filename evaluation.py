@@ -16,4 +16,5 @@ if __name__ == '__main__':
                           protocol=dataset.protocol, ks=config.evaluator.ks, usermap_file=dataset._user2id_file,
                           is_final_train=True, itemmap_file=dataset._item2id_file)
     model = torch.load(os.path.join(exp_config.save_dir, f'{dataset_config.dataname}_{model_name}.pt'))
-    evaluator.evaluate(model)
+    scores, preds_df = evaluator.evaluate(model)
+    preds_df.to_csv(os.path.join(exp_config.save_dir, f'{dataset_config.dataname}_{model_name}_preds.csv'), index=False)
