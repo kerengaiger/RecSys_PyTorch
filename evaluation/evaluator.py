@@ -7,6 +7,21 @@ from .backend import eval_func_router, predict_topk_func
 from data.data_batcher import DataBatcher
 from utils.types import sparse_to_dict
 
+import os
+import torch
+
+import models
+from data.dataset import UIRTDataset
+from evaluation.evaluator import Evaluator
+from experiment.early_stop import EarlyStop
+
+from loggers import FileLogger, CSVLogger
+from utils.general import make_log_dir, set_random_seed
+from config import load_config
+
+from ax.service.managed_loop import optimize
+import argparse
+
 class Evaluator:
     def __init__(self, eval_input, eval_target, preds_out, protocol, ks, usermap_file,
                  itemmap_file, is_final_train=False, eval_batch_size=1024):
@@ -59,3 +74,17 @@ class Evaluator:
     def _register_eval_func(self):
         self.eval_func = eval_func_router[self.protocol]
         self.predict_topk = predict_topk_func
+
+
+if __name__ == '__main__':
+    config = load_config()
+    model_name = config.experiment.model_name
+    dataset_config = config.dataset
+    dataset = UIRTDataset(**dataset_config)
+    exp_config = config.experiment
+    valid_input, valid_target = dataset.valid_input, dataset.valid_target
+    evaluator = Evaluator(valid_input, valid_target, f'{dataset_config.dataname}_{model_name}_preds.csv',
+                          protocol=dataset.protocol, ks=config.evaluator.ks, usermap_file=dataset._user2id_file,
+                          is_final_train=True, itemmap_file=dataset._item2id_file)
+    model = torch.load(os.path.join(exp_config.save_dir, f'{dataset_config.dataname}_{model_name}.pt'))
+    evaluator.evaluate(model)
