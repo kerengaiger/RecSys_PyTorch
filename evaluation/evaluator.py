@@ -1,26 +1,14 @@
-import time
 import numpy as np
 from typing import Iterable
-from collections import OrderedDict
 
 from .backend import eval_func_router, predict_topk_func
-from data.data_batcher import DataBatcher
 from utils.types import sparse_to_dict
 
 import os
 import torch
 
-import models
 from data.dataset import UIRTDataset
-from evaluation.evaluator import Evaluator
-from experiment.early_stop import EarlyStop
-
-from loggers import FileLogger, CSVLogger
-from utils.general import make_log_dir, set_random_seed
 from config import load_config
-
-from ax.service.managed_loop import optimize
-import argparse
 
 
 class Evaluator:
