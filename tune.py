@@ -12,11 +12,28 @@ from config import load_config
 
 from ax.service.managed_loop import optimize
 import argparse
+from omegaconf import OmegaConf
 
 
 def train_with_conf(hparams_cnfg):
     is_final_train = not hparams_cnfg['use_validation']
     config = load_config()
+    # config = OmegaConf.structured({'dataset': {'data_path': 'datasets/amazon/amazonbeauty_corpus.csv', 'dataname': 'amazonbeauty',
+    #                       'separator': ',', 'binarize_threshold': 4.0, 'implicit': True, 'min_usr_len': 2,
+    #                       'max_usr_len': 1000, 'min_items_cnt': 5, 'max_items_cnt': 50000, 'final_usr_len': 4,
+    #                       'protocol': 'leave_one_out', 'generalization': 'weak', 'holdout_users': 0,
+    #                       'valid_ratio': 0.0, 'test_ratio': 0.0, 'leave_k': 1, 'split_random': False,
+    #                       'use_validation': False},
+    #           'evaluator': {'ks': [20, 10, 5]}, 'early_stop': {'early_stop': 40, 'early_stop_measure': 'HR@20'},
+    #           'experiment': {'debug': False, 'save_dir': 'saves', 'num_epochs': 300, 'batch_size': 128, 'verbose':0,
+    #                          'print_step': 1, 'test_step': 1, 'test_from': 1, 'model_name': 'LightGCN', 'num_exp': 5,
+    #                          'seed': 2020, 'gpu': 1}, 'hparams': {'node_dropout': 0.3905314184725284,
+    #                                                               'emb_dim': 128, 'num_layers': 5, 'split': False,
+    #                                                               'num_folds': 100, 'graph_dir': 'graph', 'reg': 0.0001,
+    #                                                               'use_validation': False}})
+                                                                  
+    # hparams_cnfg = {'node_dropout': 0.3905314184725284, 'emb_dim': 128, 'num_layers': 5, 'split': False,
+    #                 'num_folds': 100, 'graph_dir': 'graph', 'reg': 0.0001, 'use_validation': False}
     exp_config = config.experiment
     gpu_id = exp_config.gpu
     seed = exp_config.seed
