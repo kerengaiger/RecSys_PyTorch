@@ -5,14 +5,14 @@ from omegaconf import OmegaConf
 
 @dataclass
 class DatasetConfig:
-    data_path:str='datasets/moviesdat/moviesdat_corpus.csv'
-    dataname:str='moviesdat'
-    separator:str=','
+    data_path:str='datasets/ml-1m/ratings.dat'
+    dataname:str='ml-1m'
+    separator:str='::'
     binarize_threshold:float=4.0
     implicit:bool=True
-    min_usr_len:int=100
+    min_usr_len:int=1
     max_usr_len:int=1000
-    min_items_cnt:int=100
+    min_items_cnt:int=10
     max_items_cnt:int=100000
     final_usr_len:int=4
 
