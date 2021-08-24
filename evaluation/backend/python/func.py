@@ -2,13 +2,10 @@ from time import time
 import numpy as np
 
 def predict_topk_py(scores, max_k):
-    print(max_k)
-    print(scores.shape)
     # top_k item index (not sorted)
     s = time()
     relevant_items_partition = (-scores).argpartition(max_k, 1)[:, 0:max_k]
-    print(relevant_items_partition.shape)
-    
+
     # top_k item score (not sorted)
     relevant_items_partition_original_value = np.take_along_axis(scores, relevant_items_partition, 1)
     
