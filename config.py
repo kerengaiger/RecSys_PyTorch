@@ -35,7 +35,7 @@ class EvaluatorConfig:
 class EarlyStopConfig:
     early_stop:int=40
     early_stop_measure:str='HR@20'
-    is_final_train:bool=True
+    is_final_train:bool=False
 
 @dataclass
 class ExperimentConfig:
