@@ -28,6 +28,8 @@ def compute_loo_metrics_py(pred, target, ks, usermap_file, itemmap_file):
 
         print(target_u in pred_u)
         print(np.where(pred_u == target_u))
+        print(target_u)
+        print(type(target_u))
         hit_at_k = np.where(pred_u == target_u)[0][0] + 1
         hits_at_k.append(hit_at_k)
         users.append(u)
