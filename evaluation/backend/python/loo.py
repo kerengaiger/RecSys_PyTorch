@@ -27,6 +27,7 @@ def compute_loo_metrics_py(pred, target, ks, usermap_file, itemmap_file):
         target_u = target[u][0]
 
         print(target_u)
+        print(pred_u)
         hit_at_k = np.where(pred_u == target_u)[0][0] + 1
         hits_at_k.append(hit_at_k)
         users.append(u)
