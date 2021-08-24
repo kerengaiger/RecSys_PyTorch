@@ -27,6 +27,7 @@ def compute_loo_metrics_py(pred, target, ks, usermap_file, itemmap_file):
         target_u = target[u][0]
 
         print(target_u in pred_u)
+        print(8100 in pred_u)
         print(np.where(pred_u == target_u))
         print(target_u)
         print(type(target_u))
