@@ -79,7 +79,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', choices=['LightGCN', 'BPRMF'], default='LightGCN',
                         help="model to choose")
-
+    parser.add_argument('--trials', type=str, default=50, help="trials")
     return parser.parse_args()
 
 
