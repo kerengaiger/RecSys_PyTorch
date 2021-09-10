@@ -10,12 +10,12 @@ from loggers import FileLogger, CSVLogger
 from utils.general import make_log_dir, set_random_seed
 from config import load_config
 
-from ax.service.managed_loop import optimize
+import optuna
 import argparse
 from omegaconf import OmegaConf
 
 
-def train_with_conf(hparams_cnfg):
+def train_with_conf(hparams_cnfg, trial=None):
     is_final_train = not hparams_cnfg['use_validation']
     config = load_config()
     exp_config = config.experiment
@@ -72,7 +72,7 @@ def train_with_conf(hparams_cnfg):
     csv_logger.save()
     if is_final_train:
         torch.save(model, os.path.join(exp_config.save_dir, f'{dataset_config.dataname}_{model_name}.pt'))
-    return {'HR@20': (ret['scores']['HR@20'], 0.0)}
+    return ret['scores']['HR@20']
 
 
 def parse_args():
@@ -83,41 +83,49 @@ def parse_args():
     return parser.parse_args()
 
 
-if __name__ == '__main__':
-    args = parse_args()
-    if args.model == 'LightGCN':
-        best_parameters, values, _experiment, _cur_model = optimize(
-            parameters=[
-                         {"name": "emb_dim", "type": "choice", "value_type": "int", "values": [20, 32, 64, 128]},
-                         {"name": "num_layers", "type": "choice", "value_type": "int", "values": [2, 3, 4, 5, 6]},
-                         {"name": "node_dropout", "type": "range", "value_type": "float", "bounds": [0.0, 0.6]},
-                         {"name": "split", "type": "fixed", "value_type": "bool", "value": False},
-                         {"name": "num_folds", "type": "fixed", "value_type": "int", "value": 100},
-                         {"name": "graph_dir", "type": "fixed", "value_type": "str", "value": 'graph'},
-                         {"name": "reg", "type": "fixed", "value_type": "float", "value": 0.0001},
-                         {"name": "use_validation", "type": "fixed", "value_type": "bool", "value": True},
-                     ],
-            evaluation_function=train_with_conf,
-            minimize=False,
-            objective_name='HR@20',
-            total_trials=5
-        )
-
+def objective(trial, model):
+    cnfg = {}
+    if model == 'LightGCN':
+        cnfg['split'] = False
+        cnfg['num_folds'] = 100
+        cnfg['graph_dir'] = 'graph'
+        cnfg['reg'] = 0.0001
+        cnfg['use_validation'] = True
+        cnfg['node_dropout'] = trial.suggest_float("node_dropout", 0.1, 0.6)
+        cnfg['emb_dim'] = trial.suggest_int("emb_dim", 10, 120, step=4)
+        cnfg['num_layers'] = trial.suggest_int("num_layers", 2, 5, step=1)
     else:
-        best_parameters, values, _experiment, _cur_model = optimize(
-            parameters=[
-                {"name": "hidden_dim", "type": "choice", "value_type": "int", "values": [12, 17, 20, 25, 30, 50, 100]},
-                {"name": "lr", "type": "range", "value_type": "float", "bounds": [5e-3, 1e-1]},
-                {"name": "pointwise", "type": "fixed", "value_type": "bool", "value": False},
-                {"name": "loss_func", "type": "choice", "value_type": "str", "values": ['ce', 'mse']},
-                {"name": "use_validation", "type": "fixed", "value_type": "bool", "value": True},
-            ],
-            evaluation_function=train_with_conf,
-            minimize=False,
-            objective_name='HR@20',
-            total_trials=5
-        )
+        cnfg['pointwise'] = False
+        cnfg['use_validation'] = True
+        cnfg['hidden_dim'] = trial.suggest_int("hidden_dim", 10, 100, step=4)
+        cnfg['lr'] = trial.suggest_float("lr", 5e-3, 1e-1)
+        cnfg['loss_func'] = trial.suggest_categorical("loss_func", ['ce', 'mse'])
+    hr_20 = train_with_conf(cnfg, trial)
+    return hr_20
+
+
+def main():
+    args = parse_args()
+    study = optuna.create_study(direction="maximize")
+    study.optimize(objective, n_trials=args.trials)
+
+    pruned_trials = [t for t in study.trials if t.state == optuna.structs.TrialState.PRUNED]
+    complete_trials = [t for t in study.trials if t.state == optuna.structs.TrialState.COMPLETE]
+
+    print("Study statistics: ")
+    print("  Number of finished trials: ", len(study.trials))
+    print("  Number of pruned trials: ", len(pruned_trials))
+    print("  Number of complete trials: ", len(complete_trials))
+
+    print("Best trial:")
+    best_trial = study.best_trial
+    print("  Value: ", best_trial.value)
 
     print('Final Train')
+    best_parameters = best_trial.params
     best_parameters['use_validation'] = False
     train_with_conf(best_parameters)
+
+
+if __name__ == '__main__':
+    main()
