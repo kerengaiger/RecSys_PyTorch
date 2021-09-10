@@ -12,7 +12,7 @@ from utils.Dataset import Dataset
 from utils.Logger import Logger
 from utils.Evaluator import Evaluator
 from utils.Trainer import Trainer
-from ax.service.managed_loop import optimize
+import optuna
 
 
 def train_with_conf(conf):
@@ -72,50 +72,66 @@ def train_with_conf(conf):
     if not conf['early_stop']:
         torch.save(model, pathlib.Path(conf['save_dir'], model_conf.data_name + '_bpr.pt'))
         pickle.dump(model_conf, open(pathlib.Path(conf['save_dir'], model_conf.data_name + '_cnfg.pkl'), 'wb'))
-    return {'validation loss': (best_score, 0.0), 'best_epoch': (best_epoch, 0.0)}
+    return best_score, best_epoch
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--model', type=str, default='EASE')
-parser.add_argument('--data_name', type=str, default='ml-1m')
-parser.add_argument('--tune', action='store_true')
-parser.add_argument('--data_dir', type=str, default='./data')
-parser.add_argument('--save_dir', type=str, default='./saves')
-parser.add_argument('--conf_dir', type=str, default='./conf')
-parser.add_argument('--seed', type=int, default=428)
+def objective(trial):
+    cnfg = {}
+    args = parse_args()
+    cnfg['data_name'] = args.data_name
+    cnfg['conf_dir'] = args.conf_dir
+    cnfg['model'] = args.model
+    cnfg['seed'] = args.seed
+    cnfg['data_dir'] = args.data_dir
+    cnfg['save_dir'] = args.save_dir
+    cnfg['use_validation'] = True
+    cnfg['early_stop'] = True
+    cnfg['hidden_dim'] = trial.suggest_int("hidden_dim", 10, 100, step=4)
+    cnfg['learning_rate'] = trial.suggest_float("learning_rate", 5e-3, 1e-1)
+    cnfg['batch_size'] = trial.suggest_categorical("batch_size", [128, 256, 500, 1024])
+    cnfg['loss_func'] = trial.suggest_categorical("loss_func", ['ce', 'mse'])
+    validation_loss, best_epoch = train_with_conf(cnfg)
+    trial['best_epoch'] = best_epoch
+    return validation_loss
 
-conf = parser.parse_args()
 
-if conf.tune:
-    best_parameters, values, _experiment, _cur_model = optimize(
-                parameters=[
-                    {"name": "learning_rate", "type": "range", "value_type": "float", "bounds": [5e-3, 1e-1]},
-                    {"name": "hidden_dim", "type": "choice", "value_type": "int", "values": [12, 17, 20, 25, 30, 50, 100]},
-                    {"name": "batch_size", "type": "choice", "value_type": "int", "values": [128, 256, 500, 1024]},
-                    {"name": "data_name", "type": "fixed", "value_type": "str", "value": conf.data_name},
-                    {"name": "conf_dir", "type": "fixed", "value_type": "str", "value": conf.conf_dir},
-                    {"name": "model", "type": "fixed", "value_type": "str", "value": conf.model},
-                    {"name": "seed", "type": "fixed", "value_type": "int", "value": conf.seed},
-                    {"name": "data_dir", "type": "fixed", "value_type": "str", "value": conf.data_dir},
-                    {"name": "save_dir", "type": "fixed", "value_type": "str", "value": conf.save_dir},
-                    {"name": "use_validation", "type": "fixed", "value_type": "bool", "value": True},
-                    {"name": "early_stop", "type": "fixed", "value_type": "bool", "value": True},
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model', type=str, default='EASE')
+    parser.add_argument('--data_name', type=str, default='ml-1m')
+    parser.add_argument('--tune', action='store_true')
+    parser.add_argument('--data_dir', type=str, default='./data')
+    parser.add_argument('--save_dir', type=str, default='./saves')
+    parser.add_argument('--conf_dir', type=str, default='./conf')
+    parser.add_argument('--seed', type=int, default=428)
 
-                ],
-                evaluation_function=train_with_conf,
-                minimize=True,
-                objective_name='validation loss',
-                total_trials=5
-            )
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+    study = optuna.create_study(direction="minimize")
+    study.optimize(objective, n_trials=args.trials)
+
+    pruned_trials = [t for t in study.trials if t.state == optuna.structs.TrialState.PRUNED]
+    complete_trials = [t for t in study.trials if t.state == optuna.structs.TrialState.COMPLETE]
+
+    print("Study statistics: ")
+    print("  Number of finished trials: ", len(study.trials))
+    print("  Number of pruned trials: ", len(pruned_trials))
+    print("  Number of complete trials: ", len(complete_trials))
+
+    print("Best trial:")
+    best_trial = study.best_trial
+    print("  Value: ", best_trial.value)
+
     print('Final Train')
-    best_parameters['best_epoch'] = values[0]['best_epoch']
-    print(best_parameters['best_epoch'])
-    best_parameters['num_epochs'] = int(best_parameters['best_epoch'])
+    best_parameters = best_trial.params
     best_parameters['use_validation'] = False
     best_parameters['early_stop'] = False
+    best_parameters['num_epochs'] = int(best_parameters['best_epoch'])
     train_with_conf(best_parameters)
 
 
-else:
-    print('need to implement train')
-
+if __name__ == '__main__':
+    main()
