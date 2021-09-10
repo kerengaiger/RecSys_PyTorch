@@ -83,9 +83,10 @@ def parse_args():
     return parser.parse_args()
 
 
-def objective(trial, model):
+def objective(trial):
     cnfg = {}
-    if model == 'LightGCN':
+    args = parse_args()
+    if args.model == 'LightGCN':
         cnfg['split'] = False
         cnfg['num_folds'] = 100
         cnfg['graph_dir'] = 'graph'
