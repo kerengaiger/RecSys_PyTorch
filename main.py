@@ -104,7 +104,7 @@ class Objective:
         if study.best_trial == trial:
             best_cnfg = trial.params
             best_cnfg['best_epoch'] = self.best_epoch
-            pickle.dump(best_cnfg, open(pathlib.Path(args['save_dir'], args.data_name + '_cnfg.pkl'), 'wb'))
+            pickle.dump(best_cnfg, open(pathlib.Path(args.save_dir, args.data_name + '_cnfg.pkl'), 'wb'))
 
 
 def parse_args():
