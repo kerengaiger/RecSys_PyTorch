@@ -45,6 +45,7 @@ def train_with_conf(conf):
     model_conf.save(os.path.join(logger.log_dir, 'config.json'))
 
     eval_pos, eval_target = dataset.eval_data()
+    print(eval_target)
     item_popularity = dataset.item_popularity
     evaluator = Evaluator(eval_pos, eval_target, item_popularity, model_conf.top_k)
 
