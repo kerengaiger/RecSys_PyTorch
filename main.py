@@ -75,24 +75,35 @@ def train_with_conf(conf):
     return best_score, best_epoch
 
 
-def objective(trial):
-    cnfg = {}
-    args = parse_args()
-    cnfg['data_name'] = args.data_name
-    cnfg['conf_dir'] = args.conf_dir
-    cnfg['model'] = args.model
-    cnfg['seed'] = args.seed
-    cnfg['data_dir'] = args.data_dir
-    cnfg['save_dir'] = args.save_dir
-    cnfg['use_validation'] = True
-    cnfg['early_stop'] = True
-    cnfg['hidden_dim'] = trial.suggest_int("hidden_dim", 10, 100, step=4)
-    cnfg['learning_rate'] = trial.suggest_float("learning_rate", 5e-3, 1e-1)
-    cnfg['batch_size'] = trial.suggest_categorical("batch_size", [128, 256, 500, 1024])
-    cnfg['loss_func'] = trial.suggest_categorical("loss_func", ['ce', 'mse'])
-    validation_loss, best_epoch = train_with_conf(cnfg)
-    trial['best_epoch'] = best_epoch
-    return validation_loss
+class Objective:
+    def __init__(self):
+        self.best_epoch = None
+
+    def __call__(self, trial):
+        cnfg = {}
+        args = parse_args()
+        cnfg['data_name'] = args.data_name
+        cnfg['conf_dir'] = args.conf_dir
+        cnfg['model'] = args.model
+        cnfg['seed'] = args.seed
+        cnfg['data_dir'] = args.data_dir
+        cnfg['save_dir'] = args.save_dir
+        cnfg['use_validation'] = True
+        cnfg['early_stop'] = True
+        cnfg['hidden_dim'] = trial.suggest_int("hidden_dim", 10, 100, step=4)
+        cnfg['learning_rate'] = trial.suggest_float("learning_rate", 5e-3, 1e-1)
+        cnfg['batch_size'] = trial.suggest_categorical("batch_size", [128, 256, 500, 1024])
+        cnfg['loss_func'] = trial.suggest_categorical("loss_func", ['ce', 'mse'])
+        validation_loss, best_epoch = train_with_conf(cnfg)
+        self.best_epoch = best_epoch
+        return validation_loss
+
+    def callback(self, study, trial):
+        args = parse_args()
+        if study.best_trial == trial:
+            best_cnfg = trial.params
+            best_cnfg['best_epoch'] = self.best_epoch
+            pickle.dump(best_cnfg, open(pathlib.Path(args['save_dir'], args.data_name + '_cnfg.pkl'), 'wb'))
 
 
 def parse_args():
@@ -111,8 +122,11 @@ def parse_args():
 
 def main():
     args = parse_args()
-    study = optuna.create_study(direction="minimize")
-    study.optimize(objective, n_trials=args.trials)
+    objective = Objective()
+    study = optuna.create_study(
+        pruner=optuna.pruners.MedianPruner(n_warmup_steps=10), direction="minimize"
+    )
+    study.optimize(objective, n_trials=args.trials, callbacks=[objective.callback])
 
     pruned_trials = [t for t in study.trials if t.state == optuna.structs.TrialState.PRUNED]
     complete_trials = [t for t in study.trials if t.state == optuna.structs.TrialState.COMPLETE]
