@@ -16,8 +16,6 @@ import argparse
 
 
 def train_with_conf(hparams_cnfg, trial=None):
-    print('cnfg!!!!!!!!!!!!!!!11111')
-    print(hparams_cnfg)
     is_final_train = not hparams_cnfg['use_validation']
     config = load_config()
     exp_config = config.experiment
