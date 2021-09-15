@@ -86,8 +86,8 @@ def parse_args():
 
 
 class Objective:
-    def __init__(self):
-        self.model = None
+    def __init__(self, model):
+        self.model = model
         config = load_config()
         self.exp_config = config.experiment
         self.dataset_config = config.dataset
@@ -121,7 +121,7 @@ class Objective:
 
 def main():
     args = parse_args()
-    objective = Objective()
+    objective = Objective(model=args.model)
 
     study = optuna.create_study(
         pruner=optuna.pruners.MedianPruner(n_warmup_steps=10), direction="maximize"
