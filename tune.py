@@ -93,20 +93,20 @@ class Objective:
     def __call__(self, trial):
         cnfg = {}
         if self.model == 'LightGCN':
-            cnfg['split'] = False
-            cnfg['num_folds'] = 100
-            cnfg['graph_dir'] = 'graph'
-            cnfg['reg'] = 0.0001
-            cnfg['use_validation'] = True
+            cnfg['split'] = trial.suggest_categorical("split", [False])
+            cnfg['num_folds'] = trial.suggest_int("num_folds", 100, 100)
+            cnfg['graph_dir'] = trial.suggest_categorical("graph_dir", ['graph'])
+            cnfg['reg'] = trial.suggest_float("reg", 0.0001, 0.0001)
             cnfg['node_dropout'] = trial.suggest_float("node_dropout", 0.1, 0.6)
             cnfg['emb_dim'] = trial.suggest_int("emb_dim", 10, 120, step=4)
             cnfg['num_layers'] = trial.suggest_int("num_layers", 2, 5, step=1)
-        else:
-            cnfg['pointwise'] = False
             cnfg['use_validation'] = True
+        else:
+            cnfg['pointwise'] = trial.suggest_categorical("split", [False])
             cnfg['hidden_dim'] = trial.suggest_int("hidden_dim", 10, 100, step=4)
             cnfg['lr'] = trial.suggest_float("lr", 5e-3, 1e-1)
             cnfg['loss_func'] = trial.suggest_categorical("loss_func", ['ce', 'mse'])
+            cnfg['use_validation'] = True
         hr_20 = train_with_conf(cnfg, trial)
         return hr_20
 
