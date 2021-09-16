@@ -5,8 +5,8 @@ from omegaconf import OmegaConf
 
 @dataclass
 class DatasetConfig:
-    data_path:str='datasets/amazonbooks/ratings_Books.csv'
-    dataname:str='amazonbooks'
+    data_path:str='datasets/goodbooks/goodbooks_corpus.csv'
+    dataname:str='goodbooks'
     separator:str=','
     binarize_threshold:float=4.0
     implicit:bool=True
@@ -41,7 +41,7 @@ class EarlyStopConfig:
 class ExperimentConfig:
     debug:bool=False
     save_dir:str='saves'
-    num_epochs:int=300
+    num_epochs:int=100
     batch_size:int=64
     verbose:int=0
     print_step:int=1
