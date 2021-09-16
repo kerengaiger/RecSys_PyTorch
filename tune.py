@@ -98,7 +98,7 @@ class Objective:
             cnfg['graph_dir'] = trial.suggest_categorical("graph_dir", ['graph'])
             cnfg['reg'] = trial.suggest_float("reg", 0.0001, 0.0001)
             cnfg['node_dropout'] = trial.suggest_float("node_dropout", 0.1, 0.6)
-            cnfg['emb_dim'] = trial.suggest_int("emb_dim", 10, 120, step=4)
+            cnfg['emb_dim'] = trial.suggest_int("emb_dim", 10, 100, step=4)
             cnfg['num_layers'] = trial.suggest_int("num_layers", 2, 5, step=1)
             cnfg['use_validation'] = True
         else:
