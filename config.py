@@ -10,9 +10,9 @@ class DatasetConfig:
     separator:str=','
     binarize_threshold:float=4.0
     implicit:bool=True
-    min_usr_len:int=10
+    min_usr_len:int=2
     max_usr_len:int=1000
-    min_items_cnt:int=100
+    min_items_cnt:int=5
     max_items_cnt:int=10000
     final_usr_len:int=4
 
@@ -50,7 +50,7 @@ class ExperimentConfig:
     model_name:str='LightGCN'
     num_exp:int=5
     seed:int=2020
-    gpu:int=3
+    gpu:int=2
 
 def load_config():
     dataset_config = OmegaConf.structured({'dataset' :DatasetConfig})
