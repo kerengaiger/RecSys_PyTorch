@@ -5,14 +5,14 @@ from omegaconf import OmegaConf
 
 @dataclass
 class DatasetConfig:
-    data_path:str='datasets/amazonbooks/ratings_Books.csv'
-    dataname:str='amazonbooks'
+    data_path:str='datasets/goodbooks/goodbooks_corpus.csv'
+    dataname:str='goodbooks'
     separator:str=','
     binarize_threshold:float=4.0
     implicit:bool=True
-    min_usr_len:int=10
+    min_usr_len:int=2
     max_usr_len:int=1000
-    min_items_cnt:int=100
+    min_items_cnt:int=5
     max_items_cnt:int=10000
     final_usr_len:int=4
 
@@ -41,7 +41,7 @@ class EarlyStopConfig:
 class ExperimentConfig:
     debug:bool=False
     save_dir:str='saves'
-    num_epochs:int=300
+    num_epochs:int=100
     batch_size:int=64
     verbose:int=0
     print_step:int=1
@@ -50,7 +50,7 @@ class ExperimentConfig:
     model_name:str='LightGCN'
     num_exp:int=5
     seed:int=2020
-    gpu:int=3
+    gpu:int=2
 
 def load_config():
     dataset_config = OmegaConf.structured({'dataset' :DatasetConfig})
