@@ -114,7 +114,7 @@ class Objective:
         if study.best_trial == trial:
             best_cnfg = trial.params
             pickle.dump(best_cnfg, open(os.path.join(self.exp_config.save_dir,
-                                                     f'{self.dataset_config.dataname}_{self.model}_cnfg_pkl', 'wb')))
+                                                     f'{self.dataset_config.dataname}_{self.model}_cnfg.pkl'), 'wb'))
 
 
 def main():
