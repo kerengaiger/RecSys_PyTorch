@@ -142,7 +142,7 @@ def main():
     print("  Value: ", best_trial.value)
 
     print('Final Train')
-    best_parameters = best_trial.params
+    best_parameters = pickle.load(open(pathlib.Path(args.save_dir, args.data_name + '_cnfg.pkl'), 'rb'))
     best_parameters['use_validation'] = False
     best_parameters['early_stop'] = False
     best_parameters['num_epochs'] = int(best_parameters['best_epoch'])
